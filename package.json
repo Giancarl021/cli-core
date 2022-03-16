@@ -1,0 +1,23 @@
+{
+  "name": "@giancarl021/cli-core",
+  "version": "0.1.0",
+  "description": "CLI wrapper to make easier to create tools",
+  "main": "index.js",
+  "repository": "https://github.com/Giancarl021/cli-core.git",
+  "author": "Giancarlo Fontela da Luz <gian.f.luz@hotmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "node src/tests/index.spec.js",
+    "generate-types": "npx tsc index.js --declaration --emitDeclarationOnly --allowJs"
+  },
+  "dependencies": {
+    "@giancarl021/type-inference": "^0.1.3",
+    "clone": "^2.1.2",
+    "fill-object": "^0.1.0",
+    "regex-escape": "^3.4.10",
+    "yargs": "^17.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
+}
