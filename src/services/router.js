@@ -1,5 +1,6 @@
 const clone = require('clone');
 const { routerMeta } = require('../util/constants');
+const createHelpers = require('../util/helpers');
 
 module.exports = function (appName, commands, context, helpFlags = ['help', '?']) {
     function navigate(args, flags) {
@@ -27,7 +28,9 @@ module.exports = function (appName, commands, context, helpFlags = ['help', '?']
             }
 
             if (typeof temp === 'function') {
-                return { fn: temp.bind({ context }, args.slice(i + 1), flags), meta };
+                const _args = args.slice(i + 1);
+                const helpers = createHelpers(_args, flags);
+                return { fn: temp.bind({ context, helpers }, _args, flags), meta };
             }
         }
 

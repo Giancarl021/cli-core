@@ -13,7 +13,8 @@ cliCore('cli-core', {
         math: {
             operations: {
                 calculate(args, flags) {
-                    const op = flags.O || flags.op || flags.operation;
+                    const opFlags = ['O', 'op', 'operation'];
+                    const op = this.helpers.getFlag(...opFlags); // == flags.O || flags.op || flags.operation
                     let reducer,
                         startingPoint,
                         slicer = 0;

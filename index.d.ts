@@ -1,7 +1,10 @@
 export = main;
 
 type Flag = boolean | string | number;
-type Command = (args: string[], flags: Flags) => Promise<string> | string;
+type Command = (this: CommandInternal, args: string[], flags: Flags) => Promise<string> | string;
+type HasFlagHelper = (flagName: string, ...aliases: string[]) => boolean;
+type GetFlagHelper = (flagName: string, ...aliases: string[]) => Flag;
+type WhichFlagHelper = (flagName: string, ...aliases: string[]) => string;
 type LoggerFunction = (message: string) => Promise<void> | void;
 type RunnerCommandGetter = (commandName: string) => Command;
 type RunnerCommandSetter = (commandName: string, callback: Command) => void;
@@ -10,6 +13,16 @@ type RunnerHelpGetter = () => HelpDescriptor;
 type RunnerHelpSetter = (helpDescription: HelpDescriptor) => void;
 type RunnerExecutor = () => Promise<string | void>;
 
+interface CommandHelpers {
+    hasFlag: HasFlagHelper;
+    getFlag: GetFlagHelper;
+    whichFlag: WhichFlagHelper;
+};
+
+interface CommandInternal {
+    context?: any;
+    helpers: CommandHelpers;
+}
 interface Flags {
     [flagName: string]: Flag;
 }
