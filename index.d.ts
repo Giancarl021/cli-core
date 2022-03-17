@@ -113,4 +113,4 @@ interface CliCoreRunner {
     run: RunnerExecutor;
 }
 
-declare function main(appName: string, options: Options): CliCoreRunner;
+declare function main(appName: string, options?: Options): CliCoreRunner;
