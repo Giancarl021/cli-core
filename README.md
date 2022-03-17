@@ -34,8 +34,8 @@ The runner needs two parameters to be created:
 
 | Parameter | Description | Type | Required |
 | --------- | ----------- | ---- | -------- |
-| `appName` | The name of the application, will show in error and help messages | `string` | yes |
-| `options` | The options of the application, will define the behavior of the application, like commands, flag parsing and command context | `object` | yes |
+| `appName` | The name of the application, will show in error and help messages | `string` | Yes |
+| `options` | The options of the application, will define the behavior of the application, like commands, flag parsing and command context | `object` | No |
 
 ### App Name
 
