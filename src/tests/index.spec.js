@@ -1,6 +1,7 @@
 const cliCore = require('../../index');
 
 cliCore('cli-core', {
+    appDescription: 'A tool to make CLI tools easier to make',
     behavior: {
         exitOnError: false,
         returnResult: true
@@ -57,7 +58,7 @@ cliCore('cli-core', {
     },
     help: {
         print: {
-            description: 'Prints the context and arguments',
+            description: 'Prints this, arguments and flags',
             args: [{
                 name: 'argument',
                 optional: true,
@@ -65,7 +66,7 @@ cliCore('cli-core', {
             }],
             flags: {
                 'any': {
-                    alias: ['a'],
+                    aliases: ['a'],
                     description: 'Any flag',
                     values: ['any-value'],
                     optional: true
@@ -83,7 +84,7 @@ cliCore('cli-core', {
                             flags: {
                                 operation: {
                                     description: 'Operation to perform',
-                                    alias: ['op', 'O'],
+                                    aliases: ['op', 'O'],
                                     optional: false,
                                     values: ['sum', 'subtract', 'multiply', 'divide']
                                 }

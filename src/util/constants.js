@@ -1,5 +1,6 @@
 module.exports = {
     defaultOptions: {
+        appDescription: null,
         args: {
             origin: process.argv,
             flags: {

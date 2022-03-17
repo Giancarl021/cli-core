@@ -16,7 +16,7 @@ function main(appName, options = defaultOptions) {
     flagOptions.keepArgsStartingFromIndex = options.behavior.keepArgsStartingFromIndex;
 
     const navigate = createRouter(appName, commands, options.context, helpFlags);
-    const descriptor = createDescriptor(appName, flagOptions, help);
+    const descriptor = createDescriptor(appName, options.appDescription, flagOptions, help);
 
     function setHelp(helpDescription) {
         help = clone(helpDescription);

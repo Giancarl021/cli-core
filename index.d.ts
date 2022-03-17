@@ -39,7 +39,7 @@ interface ArgDescriptor {
 
 interface FlagDescriptor {
     description: string;
-    alias?: string[];
+    aliases?: string[];
     optional?: boolean;
     values?: string[];
 }
@@ -88,6 +88,7 @@ interface Behavior {
 }
 
 interface Options {
+    appDescription?: string;
     args?: Args;
     behavior?: Behavior;
     context?: any;

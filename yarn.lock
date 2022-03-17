@@ -12,10 +12,10 @@ clone@^2.1.2:
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
   integrity sha1-G39Ln1kfHo+DZwQBYANFoCiHQ18=
 
-fill-object@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/fill-object/-/fill-object-0.1.0.tgz#315e499a8ddb0b921a6aa6e90069c969afc4a221"
-  integrity sha512-GuPlkXMfuBPuaVHU41mS0dJAigGURnS+CQewYfaFLvSqaZzRVnmegR7oQvosaS9YHbJgG0cZ66vgTbEg/oatNg==
+fill-object@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/fill-object/-/fill-object-0.1.1.tgz#6b98ce1615343d6ad7a13f425f54b0a2056d54fa"
+  integrity sha512-p2OMVbcRYeT9eDUeosU2NcJKL+dsl5MJzPhmdcsvtTg2hnBxN/viV1lh1zgbzyuQDxDy5g78YAcadEpXtfYNwQ==
   dependencies:
     clone "^2.1.2"
 
