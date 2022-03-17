@@ -23,9 +23,24 @@ module.exports = function (args, flags) {
         return n;
     }
 
+    function getArgAt(index) {
+        return args[index];
+    }
+
+    function hasArgAt(index) {
+        return args.length > index;
+    }
+
+    function cloneArgs() {
+        return [...args];
+    } 
+
     return {
         getFlag,
         hasFlag,
-        whichFlag
+        whichFlag,
+        getArgAt,
+        hasArgAt,
+        cloneArgs
     }
 }

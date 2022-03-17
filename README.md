@@ -76,6 +76,7 @@ const options = {
             logger: async message => console.log(message) // {function} The logger function, default is console.log
         },
         context: {}, // {any} The context of the application, will be passed to the commands on the `this.context` variable, default is an empty object
+        extensions: [], // {object[]} The extensions of the application, will be built and passed on the `this.extensions` variable, default is an empty array
         commands: {}, // {object} The commands of the application, the key is the command name, the value is the command object
         help: {} // {object} The help descriptor object, the key is the command name, the value is the command descriptor object
 };
@@ -99,6 +100,8 @@ runner.command.remove(commandName); // Remove a command with the name passed as 
 runner.help.get(); // Get the help descriptor object
 runner.help.set(helpDescriptorObject); // Set the help descriptor object
 ```
+
+## Extensions
 
 ## Tests
 

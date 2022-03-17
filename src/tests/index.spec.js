@@ -7,15 +7,14 @@ cliCore('cli-core', {
         returnResult: true
     },
     context: {
-        platform: process.platform,
-        cwd: process.cwd()
+        number: 10
     },
     commands: {
         math: {
             operations: {
                 calculate(args, flags) {
-                    const opFlags = ['O', 'op', 'operation'];
-                    const op = this.helpers.getFlag(...opFlags); // == flags.O || flags.op || flags.operation
+                    console.log(this.extensions.myExtension.myMethod(2, 2));
+                    const op = this.helpers.getFlag('O', 'op', 'operation'); // == flags.O || flags.op || flags.operation
                     let reducer,
                         startingPoint,
                         slicer = 0;
@@ -99,7 +98,17 @@ cliCore('cli-core', {
                 }
             }
         }
-    }
+    },
+    extensions: [ {
+        name: 'myExtension',
+        builder() {
+            return {
+                myMethod(a, b) {
+                    return a + b + this.context.number;
+                }
+            }
+        }
+    } ]
 }).run()
     .then(console.log)
     .catch(console.error);

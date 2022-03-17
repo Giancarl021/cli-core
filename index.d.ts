@@ -5,7 +5,12 @@ type Command = (this: CommandInternal, args: string[], flags: Flags) => Promise<
 type HasFlagHelper = (flagName: string, ...aliases: string[]) => boolean;
 type GetFlagHelper = (flagName: string, ...aliases: string[]) => Flag;
 type WhichFlagHelper = (flagName: string, ...aliases: string[]) => string;
+type GetArgAtHelper = (index: number) => string;
+type HasArgAtHelper = (index: number) => boolean;
+type CloneArgsHelper = () => string[];
 type LoggerFunction = (message: string) => Promise<void> | void;
+type ExtensionCallback = (this: PureCommandInternal,...args: any[]) => Promise<any> | any;
+type ExtensionBuilder = () => ExtensionCallbacks;
 type RunnerCommandGetter = (commandName: string) => Command;
 type RunnerCommandSetter = (commandName: string, callback: Command) => void;
 type RunnerCommandRemover = (commandName: string) => void;
@@ -17,11 +22,18 @@ interface CommandHelpers {
     hasFlag: HasFlagHelper;
     getFlag: GetFlagHelper;
     whichFlag: WhichFlagHelper;
+    getArgAt: GetArgAtHelper;
+    hasArgAt: HasArgAtHelper;
+    cloneArgs: CloneArgsHelper;
 }
 
-interface CommandInternal {
+interface PureCommandInternal {
     context?: any;
     helpers: CommandHelpers;
+}
+
+interface CommandInternal extends PureCommandInternal {
+    extensions: BoundExtensions;
 }
 interface Flags {
     [flagName: string]: Flag;
@@ -87,11 +99,25 @@ interface Behavior {
     logger?: LoggerFunction;
 }
 
+interface BoundExtensions {
+    [extensionName: string]: ExtensionCallbacks;
+}
+
+interface ExtensionCallbacks {
+    [callbackName: string]: ExtensionCallback;
+}
+
+interface Extension {
+    name: string;
+    builder: ExtensionBuilder;
+}
+
 interface Options {
     appDescription?: string;
     args?: Args;
     behavior?: Behavior;
     context?: any;
+    extensions?: Extension[];
     commands?: Commands;
     help?: HelpDescriptor;
 }

@@ -1,8 +1,9 @@
 const clone = require('clone');
 const { routerMeta } = require('../util/constants');
 const createHelpers = require('../util/helpers');
+const buildExtensions = require('../util/extensions');
 
-module.exports = function (appName, commands, context, helpFlags = ['help', '?']) {
+module.exports = function (appName, commands, context, extensions, helpFlags = ['help', '?']) {
     function navigate(args, flags) {
         const meta = clone(routerMeta);
 
@@ -30,7 +31,8 @@ module.exports = function (appName, commands, context, helpFlags = ['help', '?']
             if (typeof temp === 'function') {
                 const _args = args.slice(i + 1);
                 const helpers = createHelpers(_args, flags);
-                return { fn: temp.bind({ context, helpers }, _args, flags), meta };
+                const _extensions = buildExtensions(extensions, context, helpers);
+                return { fn: temp.bind({ context, helpers, extensions: _extensions }, _args, flags), meta };
             }
         }
 

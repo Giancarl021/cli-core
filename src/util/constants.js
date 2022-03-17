@@ -20,6 +20,7 @@ module.exports = {
             logger: async message => console.log(message)
         },
         context: {},
+        extensions: [],
         commands: {},
         help: {}
     },
