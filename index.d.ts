@@ -17,7 +17,7 @@ interface CommandHelpers {
     hasFlag: HasFlagHelper;
     getFlag: GetFlagHelper;
     whichFlag: WhichFlagHelper;
-};
+}
 
 interface CommandInternal {
     context?: any;
