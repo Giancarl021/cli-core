@@ -10,7 +10,7 @@ npm:
 npm install --save @giancarl021/cli-core
 ```
 
-yarn:
+Yarn:
 
 ```bash
 yarn add @giancarl021/cli-core
@@ -96,6 +96,22 @@ runner.command.get(commandName); // Get a command object with the name passed as
 runner.command.set(commandName, commandObject); // Set a new command or overwrite an existing one
 runner.command.remove(commandName); // Remove a command with the name passed as parameter
 
-runner.help.get() // Get the help descriptor object
-runner.help.set(helpDescriptorObject) // Set the help descriptor object
+runner.help.get(); // Get the help descriptor object
+runner.help.set(helpDescriptorObject); // Set the help descriptor object
+```
+
+## Tests
+
+If you want to test the library, you can run the tests by running the following commands on the root of the project:
+
+npm:
+```bash
+npm install
+npm test
+```
+
+Yarn:
+```bash
+yarn
+yarn test
 ```
