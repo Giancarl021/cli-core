@@ -30,6 +30,11 @@ module.exports = function (appName, commands, context, helpFlags = ['help', '?']
                 return { fn: temp.bind({ context }, args.slice(i + 1), flags), meta };
             }
         }
+
+        if (typeof temp === 'object') {
+            meta.help = true;
+            return { fn: null, meta };
+        }
     }
 
     return navigate;

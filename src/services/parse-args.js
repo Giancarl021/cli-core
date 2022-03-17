@@ -31,7 +31,7 @@ module.exports = function (argv = process.argv, { flagPrefix = '--', singleChara
         const flagName = parseFlag(arg);
 
         if (flagName !== null) {
-            flags[flagName] = undefined;
+            flags[flagName] = null;
             captureValue = true;
             lastFlagName = flagName;
             continue;

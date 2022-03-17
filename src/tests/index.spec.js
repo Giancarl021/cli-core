@@ -1,11 +1,14 @@
 const cliCore = require('../../index');
 
-cliCore('cli-core-test', {
+cliCore('cli-core', {
     behavior: {
         exitOnError: false,
         returnResult: true
     },
-    context: {},
+    context: {
+        platform: process.platform,
+        cwd: process.cwd()
+    },
     commands: {
         math: {
             operations: {
@@ -14,8 +17,6 @@ cliCore('cli-core-test', {
                     let reducer,
                         startingPoint,
                         slicer = 0;
-
-                    if (!args.length) return String(0);
 
                     switch(op) {
                         case 'sum':
@@ -40,6 +41,8 @@ cliCore('cli-core-test', {
                             throw new Error('Unsupported operation');
                     }
 
+                    if (!args.length) return String(0);
+
                     const results = args
                         .map(Number)
                         .slice(slicer)
@@ -49,31 +52,33 @@ cliCore('cli-core-test', {
                 }
             }
         },
-        print(args, flags) { return JSON.stringify({ context: this, args, flags }); }
+        print(args, flags) { return JSON.stringify({ context: this.context, args, flags }, null, 4); }
     },
     help: {
         print: {
-            description: '',
-            // args: ['<...any>'],
+            description: 'Prints the context and arguments',
             args: [{
                 name: 'argument',
-                optional: true
+                optional: true,
+                multiple: true
             }],
             flags: {
-                '...any': {
+                'any': {
                     alias: ['a'],
                     description: 'Any flag',
-                    values: ['any-value']
-                },
-                'f': 'ads',
-
+                    values: ['any-value'],
+                    optional: true
+                }
             }
         },
         math: {
+            description: 'Math commands',
             subcommands: {
                 operations: {
+                    description: 'Math operations commands',
                     subcommands: {
                         calculate: {
+                            description: 'Make simple arithmetic operations',
                             flags: {
                                 operation: {
                                     description: 'Operation to perform',
@@ -86,8 +91,7 @@ cliCore('cli-core-test', {
                                 name: 'number',
                                 multiple: true,
                                 optional: false
-                            }],
-                            description: ''
+                            }]
                         }
                     }
                 }

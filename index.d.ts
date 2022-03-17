@@ -37,11 +37,12 @@ interface FlagsDescriptor {
 
 interface CommandDescriptor {
     description: string;
-    args?: string[] | ArgDescriptor[];
+    args?: (string | ArgDescriptor)[];
     flags?: FlagsDescriptor;
 }
 
 interface ParentCommandDescriptor {
+    description?: string;
     subcommands: {
         [commandName: string]: ParentCommandDescriptor | CommandDescriptor | string;
     }
