@@ -1,4 +1,4 @@
-export = main;
+export = cliCore;
 
 type Flag = boolean | string | number;
 type Command = (this: CommandInternal, args: string[], flags: Flags) => Promise<string> | string;
@@ -113,4 +113,4 @@ interface CliCoreRunner {
     run: RunnerExecutor;
 }
 
-declare function main(appName: string, options?: Options): CliCoreRunner;
+declare function cliCore(appName: string, options?: Options): CliCoreRunner;
