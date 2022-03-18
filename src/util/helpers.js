@@ -23,6 +23,14 @@ module.exports = function (args, flags) {
         return n;
     }
 
+    function valueOrDefault(value, defaultValue) {
+        if (value === null || value === undefined) {
+            return defaultValue;
+        }
+
+        return value;
+    }
+
     function getArgAt(index) {
         return args[index];
     }
@@ -41,6 +49,7 @@ module.exports = function (args, flags) {
         whichFlag,
         getArgAt,
         hasArgAt,
-        cloneArgs
+        cloneArgs,
+        valueOrDefault
     }
 }

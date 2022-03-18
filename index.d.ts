@@ -8,8 +8,10 @@ type WhichFlagHelper = (flagName: string, ...aliases: string[]) => string;
 type GetArgAtHelper = (index: number) => string;
 type HasArgAtHelper = (index: number) => boolean;
 type CloneArgsHelper = () => string[];
+type ValueOrDefaultHelper = (value: any, defaultValue: any) => any;
 type LoggerFunction = (message: string) => Promise<void> | void;
 type ExtensionCallback = (this: PureCommandInternal,...args: any[]) => Promise<any> | any;
+type BoundExtensionCallback = (...args: any[]) => any | Promise<any>;
 type ExtensionBuilder = () => ExtensionCallbacks;
 type RunnerCommandGetter = (commandName: string) => Command;
 type RunnerCommandSetter = (commandName: string, callback: Command) => void;
@@ -25,6 +27,7 @@ interface CommandHelpers {
     getArgAt: GetArgAtHelper;
     hasArgAt: HasArgAtHelper;
     cloneArgs: CloneArgsHelper;
+    valueOrDefault: ValueOrDefaultHelper;
 }
 
 interface PureCommandInternal {
@@ -100,9 +103,12 @@ interface Behavior {
 }
 
 interface BoundExtensions {
-    [extensionName: string]: ExtensionCallbacks;
+    [extensionName: string]: BoundExtensionCallbacks;
 }
 
+interface BoundExtensionCallbacks {
+    [callbackName: string]: BoundExtensionCallback;
+}
 interface ExtensionCallbacks {
     [callbackName: string]: ExtensionCallback;
 }
