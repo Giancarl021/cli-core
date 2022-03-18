@@ -1,5 +1,7 @@
 const cliCore = require('../../index');
 
+throw new Error('Tests not implemented yet');
+
 cliCore('cli-core', {
     appDescription: 'A tool to make CLI tools easier to make',
     behavior: {
