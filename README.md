@@ -188,6 +188,63 @@ runner.help.set(helpDescriptorObject); // Set the help descriptor object
 
 ## Extensions
 
+This package supports extensions, which can be used to extend the functionality of each command.
+The shape of an extension object is the following:
+
+Each command function will have a `this` object assigned to it with the following properties:
+
+```typescript
+interface PureCommandInternal {
+    context?: any; // The context of the application, completely defined and handled by the user
+    helpers: CommandHelpers; // A set of helper functions to be used by the extension, like parsing flags with aliases, etc. In the extension context, the context and helpers will be the same as in the command calling the extension callback
+}
+```
+
+> **Important note:** As this package relies on `Function.prototype.bind` to assign the `this` object on each extension callback, you should not use arrow functions if you want to access any property on the `this` object within the command function.
+
+```javascript
+const myExtension = {
+    name: 'myExtension',
+    builder() {
+        const state = {};
+
+        return {
+            myMethod(a, b) {
+                return a + b + this.helpers.valueOrDefault(this.context.number, 0) + this.helpers.valueOrDefault(state.number, 0);
+            },
+
+            myAnotherMethod() {
+                state.number = this.helpers.valueOrDefault(state.number, 0) + 1;
+            },
+
+            joinArgs() {
+                return this.helpers.cloneArgs().join(' ');
+            }
+        }
+    }
+};
+```
+
+To use the extension, you can call the extension callbacks from the command `this` object:
+
+```javascript
+const commands = {
+    ['my-command']: function (args, flags) {
+        return this.extensions.myExtension.joinArgs();
+    }
+}
+```
+
+This combination should return the arguments joined by a space, for example:
+
+```bash
+<appName> my-command 1 2 3 4
+1 2 3 4
+
+<appName> my-command a b c d
+a b c d
+```
+
 ## Tests
 
 If you want to test the library, you can run the tests by running the following commands on the root of the project:
