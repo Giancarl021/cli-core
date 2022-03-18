@@ -50,6 +50,9 @@ This should match with the application name:
 ```bash
 cli-core-example arg1 arg2 --flag1 <value> --flag2
 ```
+
+> Note: To call the application without the `node <file.js>` before the arguments and flags, you can use the [`bin` property](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#bin) in the `package.json`.
+
 ### Options
 
 The `options` object contains all the properties needed to define the runner's behavior. The shape of the object is the following:
@@ -76,13 +79,95 @@ const options = {
             logger: async message => console.log(message) // {function} The logger function, default is console.log
         },
         context: {}, // {any} The context of the application, will be passed to the commands on the `this.context` variable, default is an empty object
-        extensions: [], // {object[]} The extensions of the application, will be built and passed on the `this.extensions` variable, default is an empty array
+        extensions: [], // {object[]} The extensions of the application, will be built and passed to the commands on the `this.extensions` variable, default is an empty array
         commands: {}, // {object} The commands of the application, the key is the command name, the value is the command object
         help: {} // {object} The help descriptor object, the key is the command name, the value is the command descriptor object
 };
 ```
 
 ### Commands
+
+The commands property is the main part of the application, it contains all the commands that the user would be able to call from the command-line. You can have nested commands, which will be routed according to the command chain used in the input.
+
+Each command function will have a `this` object assigned to it with the following properties:
+
+```typescript
+interface CommandInternal {
+    context?: any; // The context of the application, completely defined and handled by the user
+    helpers: CommandHelpers; // A set of helper functions to be used by the command, like parsing flags with aliases, etc
+    extensions: BoundExtensions; // The extensions of the application, defined by the user and built by the runner
+}
+```
+
+> **Important note:** As this package relies on `Function.prototype.bind` to assign the `this` object on each command, you should not use arrow functions if you want to access any property on the `this` object within the command function.
+
+**Top-level command**
+
+The shape of a top-level command is the following:
+
+```javascript
+const commands = {
+    ['my-command']: function (args, flags) {
+            // Accessing the context:
+            const appContext = this.context;
+
+            // Accessing extensions:
+            const extensionResult = this.extensions.myExtension.doSomething();
+
+            // Accessing flags using helpers:
+            const isFlagEnabled = this.helpers.hasFlag('flagName', 'alias1', 'alias2');
+            const flagValue = this.helpers.getFlag('flagName', 'alias1', 'alias2');
+
+            // Accessing args using helpers:
+            const argValue = this.helpers.getArgAt(0);
+            const hasArgAtIndex1 = this.helpers.hasArgAt(1);
+
+            // Accessing flags directly:
+            const thisFlag = flags.this || flags.T;
+            const isThatFlagTruthy = Boolean(flags.that || flags.TT);
+
+            // Accessing args directly:
+            const [arg1, arg2, ...restArgs] = args;
+
+            // Return a string to the runner
+            return 'Hello world!';
+        }
+};
+```
+
+The above command could be called from the command-line as:
+
+```bash
+<appName> my-command arg1 arg2 restArgs1 restArgs2 -T "someValue" --that true --flagName "anotherValue"
+```
+
+And the return value will always be `Hello world!`.
+
+**Nested command**
+
+Each nested command can have nested commands, and so on.
+The shape of a nested command is the following:
+
+```javascript
+const commands = {
+    ['my-command']: {
+        ['my-nested-operation']: {
+            ['my-deep-nested-operation']: function (arg, flags) {
+                /* Command code */
+                return 'Hello world from the deep!';
+            }
+        }
+    }
+};
+```
+
+The above command could be called from the command-line as:
+
+```bash
+<appName> my-command my-nested-operation my-deep-nested-operation <...args> <...flags>
+```
+
+And the return value will always be `Hello world from the deep!`.
 
 ### Help Descriptor
 
