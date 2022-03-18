@@ -218,7 +218,7 @@ With the above help descriptor, the following output will be returned:
   Flags:
     --flag1 | -f | -F | --my-flag-the-first-one: My first flag description
       Values: any-value
-    --flag2 : My second flag description
+    --flag2: My second flag description
 
 <appName> myCommand3 --help # In this case, the help will be returned if you call the command directly without any subcommand
 <appName> myCommand3

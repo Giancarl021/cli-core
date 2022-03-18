@@ -105,7 +105,7 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
             if (isComplex) {
                 r.push(`    ${flagName}${flag.hasOwnProperty('optional') ? (!flag.optional ? ' (required)' : '') : ''}: ${flag.description}${(flag.values && flag.values.length) ? `\n      Values: ${flag.values.join(' | ')}` : ''}`);
             } else {
-                r.push(`    ${flagName} : ${flag}`);
+                r.push(`    ${flagName}: ${flag}`);
             }
         }
 
