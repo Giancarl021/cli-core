@@ -18,5 +18,8 @@
   },
   "devDependencies": {
     "typescript": "^4.6.2"
-  }
+  },
+  "keywords": [
+    "cli", "terminal"
+  ]
 }

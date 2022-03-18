@@ -171,6 +171,66 @@ And the return value will always be `Hello world from the deep!`.
 
 ### Help Descriptor
 
+The help descriptor object is used to describe the commands defined on the application. The shape of the object is the following:
+
+```javascript
+const helpDescriptor = {
+    myCommand1: 'Command description',
+    myCommand2: {
+        description: 'Command description',
+        args: [
+            'arg1',
+            {
+                name: 'argument',
+                optional: false, // optional
+                multiple: false // optional
+            }
+        ],
+        flags: {
+            flag1: {
+                aliases: ['f', 'F', 'my-flag-the-first-one'], // optional
+                description: 'My first flag description',
+                values: ['any-value'], // optional
+                optional: true // optional
+            },
+            flag2: 'My second flag description'
+        }
+    },
+    myCommand3: {
+        description: 'Deep command description', // optional
+        subcommands: {
+            myCommand4: 'Command description'
+        }
+    }
+};
+```
+
+With the above help descriptor, the following output will be returned:
+
+```bash
+<appName> myCommand1 --help
+<appName> myCommand1
+  Description: Command description
+
+<appName> myCommand2 --help
+<appName> myCommand2 <arg1> <argument>
+  Description: Command description
+  Flags:
+    --flag1 | -f | -F | --my-flag-the-first-one: My first flag description
+      Values: any-value
+    --flag2 : My second flag description
+
+<appName> myCommand3 --help # In this case, the help will be returned if you call the command directly without any subcommand
+<appName> myCommand3
+  Description: Deep command description
+  Subcommands:
+    myCommand4: Command description
+
+<appName> myCommand3 myCommand4 --help
+<appName> myCommand3 myCommand4
+  Description: Command description
+```
+
 ### Runner
 
 The runner have the following methods:
