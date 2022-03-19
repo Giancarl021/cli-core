@@ -93,6 +93,7 @@ Each command function will have a `this` object assigned to it with the followin
 
 ```typescript
 interface CommandInternal {
+    appName: string; // The name of the application
     context?: any; // The context of the application, completely defined and handled by the user
     helpers: CommandHelpers; // A set of helper functions to be used by the command, like parsing flags with aliases, etc
     extensions: BoundExtensions; // The extensions of the application, defined by the user and built by the runner
@@ -108,6 +109,9 @@ The shape of a top-level command is the following:
 ```javascript
 const commands = {
     ['my-command']: function (args, flags) {
+            // Accessing the appName:
+            const appName = this.appName;
+
             // Accessing the context:
             const appContext = this.context;
 
@@ -255,6 +259,7 @@ Each command function will have a `this` object assigned to it with the followin
 
 ```typescript
 interface PureCommandInternal {
+    appName: string; // The name of the application
     context?: any; // The context of the application, completely defined and handled by the user
     helpers: CommandHelpers; // A set of helper functions to be used by the extension, like parsing flags with aliases, etc. In the extension context, the context and helpers will be the same as in the command calling the extension callback
 }

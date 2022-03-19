@@ -31,8 +31,8 @@ module.exports = function (appName, commands, context, extensions, helpFlags = [
             if (typeof temp === 'function') {
                 const _args = args.slice(i + 1);
                 const helpers = createHelpers(_args, flags);
-                const _extensions = buildExtensions(extensions, context, helpers);
-                return { fn: temp.bind({ context, helpers, extensions: _extensions }, _args, flags), meta };
+                const _extensions = buildExtensions(extensions, appName, context, helpers);
+                return { fn: temp.bind({ appName, context, helpers, extensions: _extensions }, _args, flags), meta };
             }
         }
 

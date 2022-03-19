@@ -33,6 +33,7 @@ interface CommandHelpers {
 interface PureCommandInternal {
     context?: any;
     helpers: CommandHelpers;
+    appName: string;
 }
 
 interface CommandInternal extends PureCommandInternal {
