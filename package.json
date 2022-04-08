@@ -1,6 +1,6 @@
 {
   "name": "@giancarl021/cli-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI wrapper to make easier to create tools",
   "main": "index.js",
   "repository": "https://github.com/Giancarl021/cli-core.git",
@@ -20,6 +20,7 @@
     "typescript": "^4.6.2"
   },
   "keywords": [
-    "cli", "terminal"
+    "cli",
+    "terminal"
   ]
 }
