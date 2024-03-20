@@ -32,10 +32,10 @@ const runner = cliCore(appName, options);
 
 The runner needs two parameters to be created:
 
-| Parameter | Description | Type | Required |
-| --------- | ----------- | ---- | -------- |
-| `appName` | The name of the application, will show in error and help messages | `string` | Yes |
-| `options` | The options of the application, will define the behavior of the application, like commands, flag parsing and command context | `object` | No |
+| Parameter | Description                                                                                                                  | Type     | Required |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------- | -------- | -------- |
+| `appName` | The name of the application, will show in error and help messages                                                            | `string` | Yes      |
+| `options` | The options of the application, will define the behavior of the application, like commands, flag parsing and command context | `object` | No       |
 
 ### App Name
 
@@ -60,28 +60,31 @@ The `options` object contains all the properties needed to define the runner's b
 ```javascript
 const options = {
     appDescription: null, // {string} The general description of the application, showed in the root help command if truthy
-        args: { // Settings for the arguments and flags parsed from the command line
-            origin: process.argv, // {string[]} The origin of the arguments, the default is the process arguments
-            flags: { // Settings for the flags parsed from the command line
-                flagPrefix: '--', // {string} The prefix for the flag
-                singleCharacterFlagPrefix: '-', // {string} The prefix for the single character flag
-                singleCharacterFlagOnlyUppercase: false, // {boolean} If the single character flag should only be parsed if the character is uppercase
-                tryTypeInference: true, // {boolean} Try to infer the type of the flag, default is true, example: '--flag true' will return the boolean true in the flags object if this option is enabled
-                parseFlags: true, // {boolean} If the runner should parse the flags, default is true
-                parseEmptyFlags: false, // {boolean} Allow empty flag names, default is false
-                helpFlags: ['help', '?'] // {string[]} Flags that will trigger the help command for the current command chain
-            }
-        },
-        behavior: { // Settings for the behavior of the runner
-            keepArgsStartingFromIndex: 2, // {number} The index of the arguments that should be ignored, default is 2, example: 'node app.js arg1 arg2' will return the arguments 'arg1' and 'arg2'
-            exitOnError: true, // {boolean} If the runner should call process.exit(1) on error, default is true
-            returnResult: false, // {boolean} If the runner should return the result of the command, otherwise it will print to the logger function, default is false
-            logger: async message => console.log(message) // {function} The logger function, default is console.log
-        },
-        context: {}, // {any} The context of the application, will be passed to the commands on the `this.context` variable, default is an empty object
-        extensions: [], // {object[]} The extensions of the application, will be built and passed to the commands on the `this.extensions` variable, default is an empty array
-        commands: {}, // {object} The commands of the application, the key is the command name, the value is the command object
-        help: {} // {object} The help descriptor object, the key is the command name, the value is the command descriptor object
+    args: {
+        // Settings for the arguments and flags parsed from the command line
+        origin: process.argv, // {string[]} The origin of the arguments, the default is the process arguments
+        flags: {
+            // Settings for the flags parsed from the command line
+            flagPrefix: '--', // {string} The prefix for the flag
+            singleCharacterFlagPrefix: '-', // {string} The prefix for the single character flag
+            singleCharacterFlagOnlyUppercase: false, // {boolean} If the single character flag should only be parsed if the character is uppercase
+            tryTypeInference: true, // {boolean} Try to infer the type of the flag, default is true, example: '--flag true' will return the boolean true in the flags object if this option is enabled
+            parseFlags: true, // {boolean} If the runner should parse the flags, default is true
+            parseEmptyFlags: false, // {boolean} Allow empty flag names, default is false
+            helpFlags: ['help', '?'] // {string[]} Flags that will trigger the help command for the current command chain
+        }
+    },
+    behavior: {
+        // Settings for the behavior of the runner
+        keepArgsStartingFromIndex: 2, // {number} The index of the arguments that should be ignored, default is 2, example: 'node app.js arg1 arg2' will return the arguments 'arg1' and 'arg2'
+        exitOnError: true, // {boolean} If the runner should call process.exit(1) on error, default is true
+        returnResult: false, // {boolean} If the runner should return the result of the command, otherwise it will print to the logger function, default is false
+        logger: async message => console.log(message) // {function} The logger function, default is console.log
+    },
+    context: {}, // {any} The context of the application, will be passed to the commands on the `this.context` variable, default is an empty object
+    extensions: [], // {object[]} The extensions of the application, will be built and passed to the commands on the `this.extensions` variable, default is an empty array
+    commands: {}, // {object} The commands of the application, the key is the command name, the value is the command object
+    help: {} // {object} The help descriptor object, the key is the command name, the value is the command descriptor object
 };
 ```
 
@@ -109,33 +112,37 @@ The shape of a top-level command is the following:
 ```javascript
 const commands = {
     ['my-command']: function (args, flags) {
-            // Accessing the appName:
-            const appName = this.appName;
+        // Accessing the appName:
+        const appName = this.appName;
 
-            // Accessing the context:
-            const appContext = this.context;
+        // Accessing the context:
+        const appContext = this.context;
 
-            // Accessing extensions:
-            const extensionResult = this.extensions.myExtension.doSomething();
+        // Accessing extensions:
+        const extensionResult = this.extensions.myExtension.doSomething();
 
-            // Accessing flags using helpers:
-            const isFlagEnabled = this.helpers.hasFlag('flagName', 'alias1', 'alias2');
-            const flagValue = this.helpers.getFlag('flagName', 'alias1', 'alias2');
+        // Accessing flags using helpers:
+        const isFlagEnabled = this.helpers.hasFlag(
+            'flagName',
+            'alias1',
+            'alias2'
+        );
+        const flagValue = this.helpers.getFlag('flagName', 'alias1', 'alias2');
 
-            // Accessing args using helpers:
-            const argValue = this.helpers.getArgAt(0);
-            const hasArgAtIndex1 = this.helpers.hasArgAt(1);
+        // Accessing args using helpers:
+        const argValue = this.helpers.getArgAt(0);
+        const hasArgAtIndex1 = this.helpers.hasArgAt(1);
 
-            // Accessing flags directly:
-            const thisFlag = flags.this || flags.T;
-            const isThatFlagTruthy = Boolean(flags.that || flags.TT);
+        // Accessing flags directly:
+        const thisFlag = flags.this || flags.T;
+        const isThatFlagTruthy = Boolean(flags.that || flags.TT);
 
-            // Accessing args directly:
-            const [arg1, arg2, ...restArgs] = args;
+        // Accessing args directly:
+        const [arg1, arg2, ...restArgs] = args;
 
-            // Return a string to the runner
-            return 'Hello world!';
-        }
+        // Return a string to the runner
+        return 'Hello world!';
+    }
 };
 ```
 
@@ -275,7 +282,12 @@ const myExtension = {
 
         return {
             myMethod(a, b) {
-                return a + b + this.helpers.valueOrDefault(this.context.number, 0) + this.helpers.valueOrDefault(state.number, 0);
+                return (
+                    a +
+                    b +
+                    this.helpers.valueOrDefault(this.context.number, 0) +
+                    this.helpers.valueOrDefault(state.number, 0)
+                );
             },
 
             myAnotherMethod() {
@@ -285,7 +297,7 @@ const myExtension = {
             joinArgs() {
                 return this.helpers.cloneArgs().join(' ');
             }
-        }
+        };
     }
 };
 ```
@@ -297,7 +309,7 @@ const commands = {
     ['my-command']: function (args, flags) {
         return this.extensions.myExtension.joinArgs();
     }
-}
+};
 ```
 
 This combination should return the arguments joined by a space, for example:
@@ -315,12 +327,14 @@ a b c d
 If you want to test the library, you can run the tests by running the following commands on the root of the project:
 
 npm:
+
 ```bash
 npm install
 npm test
 ```
 
 Yarn:
+
 ```bash
 yarn
 yarn test

@@ -1,4 +1,5 @@
 *.spec.ts
+*.d.ts
 
 # Logs
 logs

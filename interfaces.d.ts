@@ -1,18 +1,31 @@
 export type Flag = boolean | string | number;
-export type Command = (this: CommandInternal, args: string[], flags: Flags) => Promise<string> | string;
+export type Command = (
+    this: CommandInternal,
+    args: string[],
+    flags: Flags
+) => Promise<string> | string;
 export type HasFlagHelper = (flagName: string, ...aliases: string[]) => boolean;
 export type GetFlagHelper = (flagName: string, ...aliases: string[]) => Flag;
-export type WhichFlagHelper = (flagName: string, ...aliases: string[]) => string;
+export type WhichFlagHelper = (
+    flagName: string,
+    ...aliases: string[]
+) => string;
 export type GetArgAtHelper = (index: number) => string;
 export type HasArgAtHelper = (index: number) => boolean;
 export type CloneArgsHelper = () => string[];
 export type ValueOrDefaultHelper = (value: any, defaultValue: any) => any;
 export type LoggerFunction = (message: string) => Promise<void> | void;
-export type ExtensionCallback = (this: PureCommandInternal,...args: any[]) => Promise<any> | any;
+export type ExtensionCallback = (
+    this: PureCommandInternal,
+    ...args: any[]
+) => Promise<any> | any;
 export type BoundExtensionCallback = (...args: any[]) => any | Promise<any>;
 export type ExtensionBuilder = () => ExtensionCallbacks;
 export type RunnerCommandGetter = (commandName: string) => Command;
-export type RunnerCommandSetter = (commandName: string, callback: Command) => void;
+export type RunnerCommandSetter = (
+    commandName: string,
+    callback: Command
+) => void;
 export type RunnerCommandRemover = (commandName: string) => void;
 export type RunnerHelpGetter = () => HelpDescriptor;
 export type RunnerHelpSetter = (helpDescription: HelpDescriptor) => void;
@@ -71,8 +84,11 @@ export interface CommandDescriptor {
 export interface ParentCommandDescriptor {
     description?: string;
     subcommands: {
-        [commandName: string]: ParentCommandDescriptor | CommandDescriptor | string;
-    }
+        [commandName: string]:
+            | ParentCommandDescriptor
+            | CommandDescriptor
+            | string;
+    };
 }
 
 export interface HelpDescriptor {

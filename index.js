@@ -13,10 +13,22 @@ function main(appName, options = defaultOptions) {
     const { helpFlags, ...flagOptions } = options.args.flags;
     const { exitOnError, returnResult, logger } = options.behavior;
 
-    flagOptions.keepArgsStartingFromIndex = options.behavior.keepArgsStartingFromIndex;
+    flagOptions.keepArgsStartingFromIndex =
+        options.behavior.keepArgsStartingFromIndex;
 
-    const navigate = createRouter(appName, commands, options.context, options.extensions, helpFlags);
-    const descriptor = createDescriptor(appName, options.appDescription, flagOptions, help);
+    const navigate = createRouter(
+        appName,
+        commands,
+        options.context,
+        options.extensions,
+        helpFlags
+    );
+    const descriptor = createDescriptor(
+        appName,
+        options.appDescription,
+        flagOptions,
+        help
+    );
 
     function setHelp(helpDescription) {
         help = clone(helpDescription);

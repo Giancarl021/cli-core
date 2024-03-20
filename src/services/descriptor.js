@@ -1,20 +1,34 @@
 const isEmpty = require('../util/is-empty-string');
 
-module.exports = function (appName, appDescription, flagOptions, commandDescription = null) {
+module.exports = function (
+    appName,
+    appDescription,
+    flagOptions,
+    commandDescription = null
+) {
     const isFlagPrefixEmpty = isEmpty(flagOptions.flagPrefix);
-    const isSingleCharacterFlagPrefixEmpty = isEmpty(flagOptions.singleCharacterFlagPrefix);
+    const isSingleCharacterFlagPrefixEmpty = isEmpty(
+        flagOptions.singleCharacterFlagPrefix
+    );
 
     if (
         commandDescription &&
-        (isFlagPrefixEmpty && isSingleCharacterFlagPrefixEmpty) &&
+        isFlagPrefixEmpty &&
+        isSingleCharacterFlagPrefixEmpty &&
         commandHasFlagsDefined(commandDescription)
-    ) throw new Error('Command description cannot have flags defined without any flag prefixes');
+    )
+        throw new Error(
+            'Command description cannot have flags defined without any flag prefixes'
+        );
 
     if (
         commandDescription &&
         isFlagPrefixEmpty &&
         commandHasAnyMultipleCharacterFlags(commandDescription)
-    ) throw new Error('Command description cannot have multiple character flags without a proper flag prefix');
+    )
+        throw new Error(
+            'Command description cannot have multiple character flags without a proper flag prefix'
+        );
 
     function render(commandChain = []) {
         if (!commandDescription) return noHelp();
@@ -29,15 +43,16 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
         if (temp === null) return noHelp();
 
         for (let i = 1; i < l; i++) {
-            temp = temp.subcommands ? (temp.subcommands[commandChain[i]] || null) : null;
+            temp = temp.subcommands
+                ? temp.subcommands[commandChain[i]] || null
+                : null;
 
             if (temp === null) return noHelp();
         }
 
         if (typeof temp === 'string') {
             r += `\n  Description: ${temp}`;
-        }
-        else if (temp.subcommands) {
+        } else if (temp.subcommands) {
             r += `\n${temp.description ? `  Description: ${temp.description}\n` : ''}  Subcommands:\n${renderSubcommands(temp.subcommands)}`;
         } else {
             r += `${temp.args ? ' ' + renderArguments(temp.args) : ''}\n  Description: ${temp.description}${temp.flags ? '\n  Flags:\n' + renderFlags(temp.flags) : ''}`;
@@ -46,7 +61,7 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
         return r;
 
         function noHelp() {
-            return `No help description found for command "${appName}${l ? ' ' + commandChain.join(' '): ''}"`;
+            return `No help description found for command "${appName}${l ? ' ' + commandChain.join(' ') : ''}"`;
         }
 
         function defaultHelp() {
@@ -100,10 +115,15 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
         for (const f in flags) {
             const flag = flags[f];
             const isComplex = typeof flag === 'object';
-            const flagName = getFullFlagNames(f, isComplex ? (flag.aliases || []) : []);
+            const flagName = getFullFlagNames(
+                f,
+                isComplex ? flag.aliases || [] : []
+            );
 
             if (isComplex) {
-                r.push(`    ${flagName}${flag.hasOwnProperty('optional') ? (!flag.optional ? ' (required)' : '') : ''}: ${flag.description}${(flag.values && flag.values.length) ? `\n      Values: ${flag.values.join(' | ')}` : ''}`);
+                r.push(
+                    `    ${flagName}${flag.hasOwnProperty('optional') ? (!flag.optional ? ' (required)' : '') : ''}: ${flag.description}${flag.values && flag.values.length ? `\n      Values: ${flag.values.join(' | ')}` : ''}`
+                );
             } else {
                 r.push(`    ${flagName}: ${flag}`);
             }
@@ -122,12 +142,14 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
 
             if (!l) {
                 if (flagOptions.parseEmptyFlags) {
-                    if (!isFlagPrefixEmpty) r.push(flagOptions.flagPrefix + empty);
-                    if (!isSingleCharacterFlagPrefixEmpty) r.push(flagOptions.singleCharacterFlagPrefix + empty);
-                }
-                else throw new Error('Empty flag names are not allowed');
+                    if (!isFlagPrefixEmpty)
+                        r.push(flagOptions.flagPrefix + empty);
+                    if (!isSingleCharacterFlagPrefixEmpty)
+                        r.push(flagOptions.singleCharacterFlagPrefix + empty);
+                } else throw new Error('Empty flag names are not allowed');
             } else if (l === 1) {
-                if (isSingleCharacterFlagPrefixEmpty) r.push(flagOptions.flagPrefix + name);
+                if (isSingleCharacterFlagPrefixEmpty)
+                    r.push(flagOptions.flagPrefix + name);
                 else r.push(flagOptions.singleCharacterFlagPrefix + name);
             } else {
                 r.push(flagOptions.flagPrefix + name);
@@ -139,7 +161,7 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
 
     function commandHasFlagsDefined(commandDescriptor) {
         for (const command in commandDescriptor) {
-            const temp = commandDescriptor[command];            
+            const temp = commandDescriptor[command];
             if (typeof temp === 'string') continue;
             if (Object.keys(temp.flags || {}).length) return true;
             if (commandHasFlagsDefined(temp.subcommands)) return true;
@@ -150,7 +172,7 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
 
     function commandHasAnyMultipleCharacterFlags(commandDescriptor) {
         for (const command in commandDescriptor) {
-            const temp = commandDescriptor[command];            
+            const temp = commandDescriptor[command];
             if (typeof temp === 'string') continue;
 
             const keys = Object.keys(temp.flags || {});
@@ -161,12 +183,15 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
                     if (key.length > 1) return true;
                     if (
                         typeof flag === 'object' &&
-                        (flag.aliases && flag.aliases.length) &&
+                        flag.aliases &&
+                        flag.aliases.length &&
                         flag.aliases.some(alias => alias.length > 1)
-                    ) return true;
-                }    
+                    )
+                        return true;
+                }
             }
-            if (commandHasAnyMultipleCharacterFlags(temp.subcommands)) return true;
+            if (commandHasAnyMultipleCharacterFlags(temp.subcommands))
+                return true;
         }
 
         return false;
@@ -175,4 +200,4 @@ module.exports = function (appName, appDescription, flagOptions, commandDescript
     return {
         render
     };
-}
+};

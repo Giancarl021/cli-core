@@ -3,10 +3,25 @@ const typeInference = require('@giancarl021/type-inference');
 
 const isEmpty = require('../util/is-empty-string');
 
-module.exports = function (argv = process.argv, { flagPrefix = '--', singleCharacterFlagPrefix = '-', singleCharacterFlagOnlyUppercase = false, tryTypeInference = true, parseFlags = true, parseEmptyFlags = false, keepArgsStartingFromIndex = 2 } = {}) {
+module.exports = function (
+    argv = process.argv,
+    {
+        flagPrefix = '--',
+        singleCharacterFlagPrefix = '-',
+        singleCharacterFlagOnlyUppercase = false,
+        tryTypeInference = true,
+        parseFlags = true,
+        parseEmptyFlags = false,
+        keepArgsStartingFromIndex = 2
+    } = {}
+) {
     const rawArgs = argv.slice(keepArgsStartingFromIndex);
 
-    if (!parseFlags || (isEmpty(flagPrefix) && isEmpty(singleCharacterFlagPrefix))) return { args: rawArgs, flags: {} };
+    if (
+        !parseFlags ||
+        (isEmpty(flagPrefix) && isEmpty(singleCharacterFlagPrefix))
+    )
+        return { args: rawArgs, flags: {} };
 
     const l = rawArgs.length;
 
@@ -49,22 +64,29 @@ module.exports = function (argv = process.argv, { flagPrefix = '--', singleChara
         const workflow = [];
 
         if (!isEmpty(flagPrefix)) {
-            const callback = parseEmptyFlags ?  
-            (arg => arg.startsWith(flagPrefix) ? arg.substr(flagPrefix.length) : null) :
-            (arg => {
-                if (!arg.startsWith(flagPrefix)) return null;
-                const value = arg.substr(flagPrefix.length);
-                if (!value.length) return null;
-                return value;
-            });
+            const callback = parseEmptyFlags
+                ? arg =>
+                      arg.startsWith(flagPrefix)
+                          ? arg.substr(flagPrefix.length)
+                          : null
+                : arg => {
+                      if (!arg.startsWith(flagPrefix)) return null;
+                      const value = arg.substr(flagPrefix.length);
+                      if (!value.length) return null;
+                      return value;
+                  };
 
             workflow.push(callback);
         }
 
         if (!isEmpty(singleCharacterFlagPrefix)) {
-            const singleCharacterFlagRegex = new RegExp(`^${regexEscape(singleCharacterFlagPrefix)}[${singleCharacterFlagOnlyUppercase ? '' : 'a-z'}A-Z0-9!@#$?]${parseEmptyFlags ? '?' : ''}$`);
+            const singleCharacterFlagRegex = new RegExp(
+                `^${regexEscape(singleCharacterFlagPrefix)}[${singleCharacterFlagOnlyUppercase ? '' : 'a-z'}A-Z0-9!@#$?]${parseEmptyFlags ? '?' : ''}$`
+            );
 
-            workflow.push(arg => singleCharacterFlagRegex.test(arg) ? arg.substr(-1) : null);
+            workflow.push(arg =>
+                singleCharacterFlagRegex.test(arg) ? arg.substr(-1) : null
+            );
         }
 
         return arg => {
@@ -76,4 +98,4 @@ module.exports = function (argv = process.argv, { flagPrefix = '--', singleChara
             return null;
         };
     }
-}
+};

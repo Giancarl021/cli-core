@@ -3,7 +3,13 @@ const { routerMeta } = require('../util/constants');
 const createHelpers = require('../util/helpers');
 const buildExtensions = require('../util/extensions');
 
-module.exports = function (appName, commands, context, extensions, helpFlags = ['help', '?']) {
+module.exports = function (
+    appName,
+    commands,
+    context,
+    extensions,
+    helpFlags = ['help', '?']
+) {
     function navigate(args, flags) {
         const meta = clone(routerMeta);
 
@@ -24,15 +30,29 @@ module.exports = function (appName, commands, context, extensions, helpFlags = [
             temp = temp[arg];
 
             if (typeof temp === 'undefined') {
-                meta.error = new Error(`Command "${appName} ${args.slice(0, i + 1).join(' ')}" not found.`);
+                meta.error = new Error(
+                    `Command "${appName} ${args.slice(0, i + 1).join(' ')}" not found.`
+                );
                 return { fn: null, meta };
             }
 
             if (typeof temp === 'function') {
                 const _args = args.slice(i + 1);
                 const helpers = createHelpers(_args, flags);
-                const _extensions = buildExtensions(extensions, appName, context, helpers);
-                return { fn: temp.bind({ appName, context, helpers, extensions: _extensions }, _args, flags), meta };
+                const _extensions = buildExtensions(
+                    extensions,
+                    appName,
+                    context,
+                    helpers
+                );
+                return {
+                    fn: temp.bind(
+                        { appName, context, helpers, extensions: _extensions },
+                        _args,
+                        flags
+                    ),
+                    meta
+                };
             }
         }
 
@@ -43,4 +63,4 @@ module.exports = function (appName, commands, context, extensions, helpFlags = [
     }
 
     return navigate;
-}
+};
