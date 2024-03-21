@@ -12,8 +12,7 @@ export default function cliCore(options: PartialCliCoreOptions) {
         true
     );
 
-    const commands = structuredClone(_options.commands);
-    console.log(commands);
+    console.log(_options);
 }
 
 export type { CliCoreOptions, PartialCliCoreOptions, CliCoreBundledExtensions };
