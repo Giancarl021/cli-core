@@ -10,8 +10,16 @@ export interface CliCoreCommandThis {
     helpers: CommandHelpersInstance;
 }
 
-export type CliCoreCommand = (
+export type CliCoreCommandCallback = (
     this: CliCoreCommandThis,
     args: Args,
     flags: Flags
 ) => Awaitable<string>;
+
+export interface CliCoreCommandGroup {
+    [commandName: string]: CliCoreCommandGroup | CliCoreCommandGroup;
+}
+
+type CliCoreCommand = CliCoreCommandCallback | CliCoreCommandGroup;
+
+export default CliCoreCommand;

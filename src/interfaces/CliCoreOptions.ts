@@ -1,3 +1,4 @@
+import type CliCoreCommand from './CliCoreCommand.js';
 import type CliCoreExtension from './CliCoreExtension.js';
 import type DeepPartial from './DeepPartial.js';
 import type Nullable from './Nullable.js';
@@ -29,7 +30,7 @@ interface CliCoreOptions {
         debugMode: boolean;
     };
     extensions: CliCoreExtension[];
-    commands: Record<string, object>;
+    commands: CliCoreCommand;
 }
 
 export default CliCoreOptions;
