@@ -8,9 +8,9 @@ import type Flags from '../interfaces/Flags.js';
 import type { Arg, ArgsKey } from '../interfaces/Args.js';
 import type { Flag, FlagName } from '../interfaces/Flags.js';
 
-export type HelpersInstance = ReturnType<typeof Helpers>;
+export type CommandHelpersInstance = ReturnType<typeof CommandHelpers>;
 
-export default function Helpers(args: Args, flags: Flags) {
+export default function CommandHelpers(args: Args, flags: Flags) {
     function _flagsHas(flagName: FlagName): boolean {
         return flagName in flags;
     }

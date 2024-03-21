@@ -1,12 +1,12 @@
 import { describe, test, expect } from '@jest/globals';
-import Helpers from '../../../src/services/Helpers.js';
+import Helpers from '../../../src/services/CommandHelpers.js';
 import constants from '../../util/constants.js';
 
-import type { HelpersInstance } from '../../../src/services/Helpers.js';
+import type { CommandHelpersInstance } from '../../../src/services/CommandHelpers.js';
 
 type FunctionMatcher = ReturnType<(typeof expect)['any']>;
 
-const mockInstance: Record<keyof HelpersInstance, FunctionMatcher> = {
+const mockInstance: Record<keyof CommandHelpersInstance, FunctionMatcher> = {
     getArgAt: expect.any(Function),
     hasFlag: expect.any(Function),
     getFlag: expect.any(Function),
@@ -19,7 +19,7 @@ const mockInstance: Record<keyof HelpersInstance, FunctionMatcher> = {
     getFlagOrDefault: expect.any(Function)
 };
 
-describe('[UNIT] services/Helpers', () => {
+describe('[UNIT] services/CommandHelpers', () => {
     test('Empty execution parameters', () => {
         const helpers = Helpers(
             constants.executionParameters.empty.args,

@@ -3,7 +3,6 @@ import CliCoreOptions from 'src/interfaces/CliCoreOptions.js';
 const defaultOptions: CliCoreOptions = {
     appName: 'cli-core-application',
     appDescription: null,
-    context: {},
     behavior: {
         debugMode: false
     },
@@ -27,5 +26,8 @@ const defaultOptions: CliCoreOptions = {
 };
 
 export default {
-    defaultOptions
+    defaultOptions,
+    extensions: {
+        nameRegex: /^[_A-Z]+[_A-Z0-9]*$/i
+    }
 } as const;

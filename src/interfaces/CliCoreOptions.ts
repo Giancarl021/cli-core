@@ -1,4 +1,11 @@
+import type CliCoreExtension from './CliCoreExtension.js';
+import type DeepPartial from './DeepPartial.js';
 import type Nullable from './Nullable.js';
+
+export type PartialCliCoreOptions = DeepPartial<
+    Exclude<CliCoreOptions, 'appName'>
+> &
+    Pick<CliCoreOptions, 'appName'>;
 
 interface CliCoreOptions {
     appName: string;
@@ -21,8 +28,7 @@ interface CliCoreOptions {
     behavior: {
         debugMode: boolean;
     };
-    context: Record<string, object>;
-    extensions: object[];
+    extensions: CliCoreExtension[];
     commands: Record<string, object>;
 }
 
