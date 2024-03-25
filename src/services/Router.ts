@@ -25,9 +25,7 @@ export default function Router(options: RouterOptions) {
             actualArgs: []
         };
 
-        let currentCommand: Undefinable<CliCoreCommand> = structuredClone(
-            options.commands
-        );
+        let currentCommand: Undefinable<CliCoreCommand> = options.commands;
 
         for (const flag of options.arguments.flags.help) {
             if (flag in flags) {
@@ -56,13 +54,14 @@ export default function Router(options: RouterOptions) {
             if (typeof currentCommand === 'undefined') {
                 result.status = 'error';
                 result.result = new Error(
-                    `Command "${index ? args.slice(0, index + 1) : args} not found"`
+                    `Command "${result.commandChain.join(' ')}" not found${result.commandChain.length > 1 ? `. There is no "${result.commandChain[result.commandChain.length - 1]}" branch` : ''}`
                 );
 
                 return true;
             }
 
             if (typeof currentCommand === 'function') {
+                result.status = result.status === 'help' ? 'help' : 'callback';
                 result.actualArgs = index ? args.slice(index) : args;
                 result.result = currentCommand;
 

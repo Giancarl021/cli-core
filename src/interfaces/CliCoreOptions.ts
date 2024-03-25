@@ -28,6 +28,7 @@ interface CliCoreOptions {
     };
     behavior: {
         debugMode: boolean;
+        colorfulOutput: boolean;
     };
     extensions: CliCoreExtension[];
     commands: CliCoreCommand;

@@ -17,7 +17,7 @@ export type CliCoreCommandCallback = (
 ) => Awaitable<string>;
 
 export interface CliCoreCommandGroup {
-    [commandName: string]: CliCoreCommandGroup | CliCoreCommandGroup;
+    [commandName: string]: CliCoreCommandGroup | CliCoreCommandCallback;
 }
 
 type CliCoreCommand = CliCoreCommandCallback | CliCoreCommandGroup;

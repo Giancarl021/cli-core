@@ -1,10 +1,11 @@
-import CliCoreOptions from 'src/interfaces/CliCoreOptions.js';
+import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
 
 const defaultOptions: CliCoreOptions = {
     appName: 'cli-core-application',
     appDescription: null,
     behavior: {
-        debugMode: false
+        debugMode: false,
+        colorfulOutput: false
     },
     commands: {},
     extensions: [],
