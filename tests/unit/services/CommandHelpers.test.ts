@@ -1,12 +1,10 @@
 import { describe, test, expect } from '@jest/globals';
-import Helpers from '../../../src/services/CommandHelpers.js';
+import CommandHelpers from '../../../src/services/CommandHelpers.js';
 import constants from '../../util/constants.js';
 
-import type { CommandHelpersInstance } from '../../../src/services/CommandHelpers.js';
+import type { MockService } from 'tests/util/types.js';
 
-type FunctionMatcher = ReturnType<(typeof expect)['any']>;
-
-const mockInstance: Record<keyof CommandHelpersInstance, FunctionMatcher> = {
+const mockInstance: MockService<typeof CommandHelpers> = {
     getArgAt: expect.any(Function),
     hasFlag: expect.any(Function),
     getFlag: expect.any(Function),
@@ -21,7 +19,7 @@ const mockInstance: Record<keyof CommandHelpersInstance, FunctionMatcher> = {
 
 describe('[UNIT] services/CommandHelpers', () => {
     test('Empty execution parameters', () => {
-        const helpers = Helpers(
+        const helpers = CommandHelpers(
             constants.executionParameters.empty.args,
             constants.executionParameters.empty.flags
         );
@@ -48,7 +46,7 @@ describe('[UNIT] services/CommandHelpers', () => {
     });
 
     test('Single argument execution parameters', () => {
-        const helpers = Helpers(
+        const helpers = CommandHelpers(
             constants.executionParameters.singleArgument.args,
             constants.executionParameters.singleArgument.flags
         );
@@ -75,7 +73,7 @@ describe('[UNIT] services/CommandHelpers', () => {
     });
 
     test('Single flag execution parameters', () => {
-        const helpers = Helpers(
+        const helpers = CommandHelpers(
             constants.executionParameters.singleFlag.args,
             constants.executionParameters.singleFlag.flags
         );

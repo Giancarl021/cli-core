@@ -6,8 +6,8 @@ settings:
 
 dependencies:
     '@giancarl021/type-inference':
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.0.1
+        version: 1.0.1
     fill-object:
         specifier: ^0.1.3
         version: 0.1.3
@@ -579,10 +579,10 @@ packages:
         engines: { node: ^12.22.0 || ^14.17.0 || >=16.0.0 }
         dev: true
 
-    /@giancarl021/type-inference@1.0.0:
+    /@giancarl021/type-inference@1.0.1:
         resolution:
             {
-                integrity: sha512-1LlmJ6E57c7THpQmjjhPxp4oDPOXGZJl1gQJJ9St62ctwZRqtwqZjZ1fCZhRiDSLB9YSiiUv/H/4qHu3Kvwp+w==
+                integrity: sha512-Uzq+ytf7wRWJLwFv7b07beCnK3jN8eQSWXKG+dNUf70u/+eQtWr8KIKGmFi1CbXVJV+u3ZvjHAtmgTxt/ROnXA==
             }
         engines: { node: '>=20.0.0' }
         dev: false

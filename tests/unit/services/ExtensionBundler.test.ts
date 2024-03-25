@@ -1,13 +1,11 @@
 import { describe, test, expect } from '@jest/globals';
 import ExtensionBundler from '../../../src/services/ExtensionBundler.js';
-
-import type { ExtensionBundlerInstance } from '../../../src/services/ExtensionBundler.js';
 import constants from '../../util/constants.js';
-import { CommandHelpersInstance } from '../../../src/services/CommandHelpers.js';
 
-type FunctionMatcher = ReturnType<(typeof expect)['any']>;
+import type { CommandHelpersInstance } from '../../../src/services/CommandHelpers.js';
+import type { MockService } from '../../util/types.js';
 
-const mockInstance: Record<keyof ExtensionBundlerInstance, FunctionMatcher> = {
+const mockInstance: MockService<typeof ExtensionBundler> = {
     bundle: expect.any(Function)
 };
 

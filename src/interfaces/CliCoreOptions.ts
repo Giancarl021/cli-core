@@ -16,13 +16,9 @@ interface CliCoreOptions {
         ignoreFirst: number;
         flags: {
             parse: boolean;
-            flagPrefix: string;
-            singleCharacterFlags: {
-                prefix: '-';
-                onlyUppercase: boolean;
-            };
+            prefixes: string[];
             inferTypes: boolean;
-            parseEmptyFlags: boolean;
+            ignoreEmptyFlags: boolean;
             help: string[];
         };
     };

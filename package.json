@@ -21,7 +21,7 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "@giancarl021/type-inference": "^1.0.0",
+        "@giancarl021/type-inference": "^1.0.1",
         "fill-object": "^0.1.3",
         "regex-escape": "^3.4.10"
     },

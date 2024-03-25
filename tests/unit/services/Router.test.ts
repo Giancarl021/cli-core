@@ -1,15 +1,11 @@
 import { describe, test, expect } from '@jest/globals';
 import Router from '../../../src/services/Router.js';
-
-import type {
-    RouterOptions,
-    RouterInstance
-} from '../../../src/services/Router.js';
 import constants from '../../util/constants.js';
 
-type FunctionMatcher = ReturnType<(typeof expect)['any']>;
+import type { RouterOptions } from '../../../src/services/Router.js';
+import { MockService } from 'tests/util/types.js';
 
-const mockInstance: Record<keyof RouterInstance, FunctionMatcher> = {
+const mockInstance: MockService<typeof Router> = {
     navigate: expect.any(Function)
 };
 

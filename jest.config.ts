@@ -2,6 +2,7 @@ import type { JestConfigWithTsJest } from 'ts-jest';
 
 const config: JestConfigWithTsJest = {
     testMatch: ['<rootDir>/tests/**/*.test.ts'],
+    transformIgnorePatterns: [],
     moduleFileExtensions: [
         'js',
         'mjs',
@@ -20,10 +21,11 @@ const config: JestConfigWithTsJest = {
     transform: {
         // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
         // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
-        '^.+\\.tsx?$': [
+        '^.+\\.(j|t)sx?$': [
             'ts-jest',
             {
-                useESM: true
+                useESM: true,
+                tsconfig: './tsconfig.json'
             }
         ]
     }
