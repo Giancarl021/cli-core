@@ -2,7 +2,7 @@ import { describe, test, expect } from '@jest/globals';
 import CommandHelpers from '../../../src/services/CommandHelpers.js';
 import constants from '../../util/constants.js';
 
-import type { MockService } from 'tests/util/types.js';
+import type { MockService } from '../../util/types.js';
 
 const mockInstance: MockService<typeof CommandHelpers> = {
     getArgAt: expect.any(Function),

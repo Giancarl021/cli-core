@@ -3,7 +3,7 @@ import Router from '../../../src/services/Router.js';
 import constants from '../../util/constants.js';
 
 import type { RouterOptions } from '../../../src/services/Router.js';
-import { MockService } from 'tests/util/types.js';
+import { MockService } from '../../util/types.js';
 
 const mockInstance: MockService<typeof Router> = {
     navigate: expect.any(Function)

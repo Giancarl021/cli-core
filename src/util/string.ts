@@ -1,4 +1,4 @@
-import type Maybe from 'src/interfaces/Maybe.js';
+import type Maybe from '../interfaces/Maybe.js';
 
 export function isEmpty<T extends Maybe<string>>(value: T): boolean {
     if (value === null || value === undefined) return true;

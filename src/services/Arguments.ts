@@ -5,15 +5,24 @@ import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
 import type ParsedArguments from '../interfaces/ParsedArguments.js';
 import type Flags from '../interfaces/Flags.js';
 import type Args from '../interfaces/Args.js';
-import type Nullable from 'src/interfaces/Nullable.js';
+import type Nullable from '../interfaces/Nullable.js';
 
+export type ArgumentsOptions = Omit<CliCoreOptions['arguments'], 'flags'> & {
+    flags: Omit<CliCoreOptions['arguments']['flags'], 'help'>;
+};
 export type ArgumentsInstance = ReturnType<typeof Arguments>;
 
-export default function Arguments(options: CliCoreOptions['arguments']) {
-    const prefixes = options.flags.prefixes.filter(prefix => !isEmpty(prefix));
+export default function Arguments(options: ArgumentsOptions) {
+    const prefixes = options.flags.prefixes
+        .filter(prefix => !isEmpty(prefix))
+        .sort((a, b) => b.length - a.length);
 
     const formatArgument = options.flags.inferTypes
-        ? (argument: string) => inferType(argument)
+        ? (argument: string) => {
+              const inference = inferType(argument);
+              if (typeof inference === 'undefined') return 'undefined';
+              return inference;
+          }
         : (argument: string) => argument;
 
     function _matchFlag(argument: string): Nullable<string> {
@@ -40,6 +49,7 @@ export default function Arguments(options: CliCoreOptions['arguments']) {
         const flags: Flags = {};
 
         let currentFlagName: Nullable<string> = null;
+        const explicitNullFlags: string[] = [];
 
         for (const arg of rawArgs) {
             const flagName = _matchFlag(arg);
@@ -51,12 +61,26 @@ export default function Arguments(options: CliCoreOptions['arguments']) {
             }
 
             if (currentFlagName) {
-                flags[currentFlagName] = formatArgument(arg);
+                const flagValue = formatArgument(arg);
+                flags[currentFlagName] = flagValue;
+                if (options.flags.ignoreEmptyFlags && flagValue === null)
+                    explicitNullFlags.push(currentFlagName);
+
                 currentFlagName = null;
                 continue;
             }
 
             args.push(arg);
+        }
+
+        if (options.flags.ignoreEmptyFlags) {
+            const toDelete: string[] = [];
+            for (const flag in flags) {
+                if (flags[flag] === null && !explicitNullFlags.includes(flag))
+                    toDelete.push(flag);
+
+                for (const flag of toDelete) delete flags[flag];
+            }
         }
 
         return { args, flags };

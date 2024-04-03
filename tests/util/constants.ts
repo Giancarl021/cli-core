@@ -1,4 +1,4 @@
-import type CliCoreExtension from 'src/interfaces/CliCoreExtension.js';
+import type CliCoreExtension from '../../src/interfaces/CliCoreExtension.js';
 import type Args from '../../src/interfaces/Args.js';
 import type Flags from '../../src/interfaces/Flags.js';
 

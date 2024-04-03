@@ -9,8 +9,7 @@
         "declaration": true,
         "outDir": "lib",
         "noEmit": false,
-        "forceConsistentCasingInFileNames": true,
-        "baseUrl": "."
+        "forceConsistentCasingInFileNames": true
     },
     "exclude": ["node_modules", "lib"],
     "include": ["index.ts", "src/**/*.ts"]

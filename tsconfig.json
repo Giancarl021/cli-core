@@ -10,7 +10,6 @@
         "outDir": "lib",
         "noEmit": true,
         "forceConsistentCasingInFileNames": true,
-        "baseUrl": ".",
         "allowJs": true
     },
     "exclude": ["node_modules", "lib"],

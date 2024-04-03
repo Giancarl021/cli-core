@@ -2,9 +2,9 @@ import type Args from '../interfaces/Args.js';
 import type Flags from '../interfaces/Flags.js';
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
 import type RoutingResult from '../interfaces/RoutingResult.js';
-import type Undefinable from 'src/interfaces/Undefinable.js';
-import type CliCoreCommand from 'src/interfaces/CliCoreCommand.js';
-import type { CliCoreCommandGroup } from 'src/interfaces/CliCoreCommand.js';
+import type Undefinable from '../interfaces/Undefinable.js';
+import type CliCoreCommand from '../interfaces/CliCoreCommand.js';
+import type { CliCoreCommandGroup } from '../interfaces/CliCoreCommand.js';
 
 export type RouterInstance = ReturnType<typeof Router>;
 

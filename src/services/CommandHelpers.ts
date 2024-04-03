@@ -1,8 +1,8 @@
 import { concat } from '../util/array.js';
 
 import type Nullable from '../interfaces/Nullable.js';
-import type Undefinable from 'src/interfaces/Undefinable.js';
-import type Maybe from 'src/interfaces/Maybe.js';
+import type Undefinable from '../interfaces/Undefinable.js';
+import type Maybe from '../interfaces/Maybe.js';
 import type Args from '../interfaces/Args.js';
 import type Flags from '../interfaces/Flags.js';
 import type { Arg, ArgsKey } from '../interfaces/Args.js';

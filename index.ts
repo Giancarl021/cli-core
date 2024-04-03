@@ -1,5 +1,5 @@
 import fillObject from 'fill-object';
-import constants from 'src/util/constants.js';
+import constants from './src/util/constants.js';
 
 import type CliCoreOptions from './src/interfaces/CliCoreOptions.js';
 import type { PartialCliCoreOptions } from './src/interfaces/CliCoreOptions.js';

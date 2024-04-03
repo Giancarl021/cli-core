@@ -16,7 +16,7 @@ const defaultOptions: CliCoreOptions = {
             help: ['h', 'help', '?'],
             parse: true,
             inferTypes: true,
-            prefixes: ['--', '-'],
+            prefixes: ['-', '--'],
             ignoreEmptyFlags: false
         }
     }
