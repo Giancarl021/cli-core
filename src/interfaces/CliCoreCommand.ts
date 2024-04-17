@@ -1,12 +1,12 @@
-import type { CommandHelpersInstance } from 'src/services/CommandHelpers.js';
+import type { CommandHelpersInstance } from '../services/CommandHelpers.js';
 import type Args from './Args.js';
 import type Awaitable from './Awaitable.js';
-import type CliCoreBundledExtensions from './CliCoreBundledExtensions.js';
+import type CliCoreCommandAddons from './CliCoreCommandAddons.js';
 import type Flags from './Flags.js';
 
 export interface CliCoreCommandThis {
     appName: string;
-    extensions: CliCoreBundledExtensions;
+    extensions: CliCoreCommandAddons;
     helpers: CommandHelpersInstance;
 }
 

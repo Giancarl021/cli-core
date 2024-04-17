@@ -36,20 +36,37 @@ export default {
     extensions: {
         a: {
             name: 'extensionA',
-            build: _ => ({ methodA() {}, valueA: 'a' })
+            buildCommandAddons: () => ({ methodA() {}, valueA: 'a' })
         } as CliCoreExtension,
         b: {
             name: 'extensionB',
-            build: _ => ({ methodB() {}, valueB: 'b' })
+            interceptors: {
+                beforeParsing(_, x) {
+                    return x;
+                },
+                beforeRouting(_, x) {
+                    return x;
+                },
+                beforeRunning(_, x) {
+                    return x;
+                },
+                beforeOutputing(_, x) {
+                    return x;
+                },
+                beforeEnding(_) {}
+            }
         } as CliCoreExtension,
         invalidName: {
             name: 'Invalid Name Extension',
-            build: _ => ({})
+            buildCommandAddons: () => ({})
         } as CliCoreExtension,
         invalidBuilder: {
             name: 'invalidBuilderExtension',
-            build: ((_: unknown) =>
-                null) as unknown as CliCoreExtension['build']
+            buildCommandAddons: (() =>
+                null) as unknown as CliCoreExtension['buildCommandAddons']
+        } as CliCoreExtension,
+        empty: {
+            name: 'empty'
         } as CliCoreExtension
     },
     options: {}

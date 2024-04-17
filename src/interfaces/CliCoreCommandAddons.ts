@@ -6,6 +6,6 @@ export type BundledExtensionCallback = (
     ...args: Parameters<AnyCallback>
 ) => ReturnType<AnyCallback>;
 
-interface CliCoreBundledExtensions {}
+interface CliCoreCommandAddons {}
 
-export default CliCoreBundledExtensions;
+export default CliCoreCommandAddons;

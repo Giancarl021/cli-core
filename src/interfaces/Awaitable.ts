@@ -1,3 +1,3 @@
-type Awaitable<T> = T | Promise<T>;
+type Awaitable<T = void> = T | Promise<T>;
 
 export default Awaitable;

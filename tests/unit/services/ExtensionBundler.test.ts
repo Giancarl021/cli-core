@@ -20,10 +20,26 @@ describe('[UNIT] services/ExtensionBundler', () => {
 
         expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
 
-        expect(bundler.bundle(mockHelpers)).toEqual({});
+        const bundle = bundler.bundle(mockHelpers);
+
+        expect(bundle.commandAddons).toEqual({});
+
+        expect(bundle.interceptors).toMatchObject({
+            beforeParsing: expect.anything(),
+            beforeRouting: expect.anything(),
+            beforeRunning: expect.anything(),
+            beforeOutputing: expect.anything(),
+            beforeEnding: expect.anything()
+        });
+
+        expect(bundle.interceptors.beforeParsing).toHaveLength(0);
+        expect(bundle.interceptors.beforeRouting).toHaveLength(0);
+        expect(bundle.interceptors.beforeRunning).toHaveLength(0);
+        expect(bundle.interceptors.beforeOutputing).toHaveLength(0);
+        expect(bundle.interceptors.beforeEnding).toHaveLength(0);
     });
 
-    test('Single extension', () => {
+    test('Single extension with only command addons', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
             extensions: [constants.extensions.a]
@@ -31,13 +47,70 @@ describe('[UNIT] services/ExtensionBundler', () => {
 
         expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
 
-        expect(bundler.bundle(mockHelpers)).toMatchObject(
-            expect.objectContaining({
-                extensionA: {
-                    methodA: expect.any(Function),
-                    valueA: 'a'
-                }
-            })
+        const bundle = bundler.bundle(mockHelpers);
+
+        expect(bundle.commandAddons).toEqual({
+            extensionA: {
+                methodA: expect.any(Function),
+                valueA: 'a'
+            }
+        });
+
+        expect(bundle.interceptors).toMatchObject({
+            beforeParsing: expect.anything(),
+            beforeRouting: expect.anything(),
+            beforeRunning: expect.anything(),
+            beforeOutputing: expect.anything(),
+            beforeEnding: expect.anything()
+        });
+
+        expect(bundle.interceptors.beforeParsing).toHaveLength(0);
+        expect(bundle.interceptors.beforeRouting).toHaveLength(0);
+        expect(bundle.interceptors.beforeRunning).toHaveLength(0);
+        expect(bundle.interceptors.beforeOutputing).toHaveLength(0);
+        expect(bundle.interceptors.beforeEnding).toHaveLength(0);
+    });
+
+    test('Single extension with only interceptors', () => {
+        const bundler = ExtensionBundler({
+            appName: constants.appName,
+            extensions: [constants.extensions.b]
+        });
+
+        expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
+
+        const bundle = bundler.bundle(mockHelpers);
+
+        expect(bundle.commandAddons).toEqual({});
+
+        expect(bundle.interceptors).toMatchObject({
+            beforeParsing: expect.anything(),
+            beforeRouting: expect.anything(),
+            beforeRunning: expect.anything(),
+            beforeOutputing: expect.anything(),
+            beforeEnding: expect.anything()
+        });
+
+        expect(bundle.interceptors.beforeParsing).toHaveLength(1);
+        expect(bundle.interceptors.beforeRouting).toHaveLength(1);
+        expect(bundle.interceptors.beforeRunning).toHaveLength(1);
+        expect(bundle.interceptors.beforeOutputing).toHaveLength(1);
+        expect(bundle.interceptors.beforeEnding).toHaveLength(1);
+
+        expect(bundle.interceptors.beforeParsing[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeParsing
+        );
+        expect(bundle.interceptors.beforeRouting[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeRouting
+        );
+        expect(bundle.interceptors.beforeRunning[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeRunning
+        );
+        expect(bundle.interceptors.beforeOutputing[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeOutputing
+        );
+        expect(bundle.interceptors.beforeEnding[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeEnding
         );
     });
 
@@ -49,17 +122,43 @@ describe('[UNIT] services/ExtensionBundler', () => {
 
         expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
 
-        expect(bundler.bundle(mockHelpers)).toMatchObject(
-            expect.objectContaining({
-                extensionA: {
-                    methodA: expect.any(Function),
-                    valueA: 'a'
-                },
-                extensionB: {
-                    methodB: expect.any(Function),
-                    valueB: 'b'
-                }
-            })
+        const bundle = bundler.bundle(mockHelpers);
+
+        expect(bundle.commandAddons).toEqual({
+            extensionA: {
+                methodA: expect.any(Function),
+                valueA: 'a'
+            }
+        });
+
+        expect(bundle.interceptors).toMatchObject({
+            beforeParsing: expect.anything(),
+            beforeRouting: expect.anything(),
+            beforeRunning: expect.anything(),
+            beforeOutputing: expect.anything(),
+            beforeEnding: expect.anything()
+        });
+
+        expect(bundle.interceptors.beforeParsing).toHaveLength(1);
+        expect(bundle.interceptors.beforeRouting).toHaveLength(1);
+        expect(bundle.interceptors.beforeRunning).toHaveLength(1);
+        expect(bundle.interceptors.beforeOutputing).toHaveLength(1);
+        expect(bundle.interceptors.beforeEnding).toHaveLength(1);
+
+        expect(bundle.interceptors.beforeParsing[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeParsing
+        );
+        expect(bundle.interceptors.beforeRouting[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeRouting
+        );
+        expect(bundle.interceptors.beforeRunning[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeRunning
+        );
+        expect(bundle.interceptors.beforeOutputing[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeOutputing
+        );
+        expect(bundle.interceptors.beforeEnding[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeEnding
         );
     });
 
@@ -99,6 +198,19 @@ describe('[UNIT] services/ExtensionBundler', () => {
 
         expect(() => bundler.bundle(mockHelpers)).toThrow(
             'Invalid extension build for "invalidBuilderExtension". The result is not an Object'
+        );
+    });
+
+    test('Empty extension', () => {
+        const bundler = ExtensionBundler({
+            appName: constants.appName,
+            extensions: [constants.extensions.empty]
+        });
+
+        expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
+
+        expect(() => bundler.bundle(mockHelpers)).toThrow(
+            'Extension "empty" does not have any command bundle nor flow interceptors'
         );
     });
 });
