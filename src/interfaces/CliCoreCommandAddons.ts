@@ -4,7 +4,6 @@
  * packages, providing full TypeScript support for the
  * CLI core extension.
  */
-// eslint-disable-next-line
 interface CliCoreCommandAddons {}
 
 export default CliCoreCommandAddons;
