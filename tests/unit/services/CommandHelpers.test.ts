@@ -62,6 +62,9 @@ describe('[UNIT] services/CommandHelpers', () => {
         expect(() => helpers.requireArgs('first', 'second')).toThrow(
             'Missing required <second> argument'
         );
+        expect(helpers.requireArgs('first')).toMatchObject({
+            first: '0'
+        });
         expect(helpers.valueOrDefault(1, 10)).toBe(1);
         expect(helpers.valueOrDefault(null, 10)).toBe(10);
         expect(helpers.valueOrDefault(undefined, 10)).toBe(10);

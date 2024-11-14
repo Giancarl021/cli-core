@@ -25,7 +25,7 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
             beforeParsing: [],
             beforeRouting: [],
             beforeRunning: [],
-            beforeOutputing: [],
+            beforeOutputting: [],
             beforeEnding: []
         };
 
@@ -81,9 +81,9 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
                         extension.interceptors.beforeRunning
                     );
 
-                if (extension.interceptors.beforeOutputing)
-                    interceptors.beforeOutputing.push(
-                        extension.interceptors.beforeOutputing
+                if (extension.interceptors.beforeOutputting)
+                    interceptors.beforeOutputting.push(
+                        extension.interceptors.beforeOutputting
                     );
 
                 if (extension.interceptors.beforeEnding)

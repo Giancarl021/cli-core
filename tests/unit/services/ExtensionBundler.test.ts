@@ -28,14 +28,14 @@ describe('[UNIT] services/ExtensionBundler', () => {
             beforeParsing: expect.anything(),
             beforeRouting: expect.anything(),
             beforeRunning: expect.anything(),
-            beforeOutputing: expect.anything(),
+            beforeOutputting: expect.anything(),
             beforeEnding: expect.anything()
         });
 
         expect(bundle.interceptors.beforeParsing).toHaveLength(0);
         expect(bundle.interceptors.beforeRouting).toHaveLength(0);
         expect(bundle.interceptors.beforeRunning).toHaveLength(0);
-        expect(bundle.interceptors.beforeOutputing).toHaveLength(0);
+        expect(bundle.interceptors.beforeOutputting).toHaveLength(0);
         expect(bundle.interceptors.beforeEnding).toHaveLength(0);
     });
 
@@ -60,14 +60,14 @@ describe('[UNIT] services/ExtensionBundler', () => {
             beforeParsing: expect.anything(),
             beforeRouting: expect.anything(),
             beforeRunning: expect.anything(),
-            beforeOutputing: expect.anything(),
+            beforeOutputting: expect.anything(),
             beforeEnding: expect.anything()
         });
 
         expect(bundle.interceptors.beforeParsing).toHaveLength(0);
         expect(bundle.interceptors.beforeRouting).toHaveLength(0);
         expect(bundle.interceptors.beforeRunning).toHaveLength(0);
-        expect(bundle.interceptors.beforeOutputing).toHaveLength(0);
+        expect(bundle.interceptors.beforeOutputting).toHaveLength(0);
         expect(bundle.interceptors.beforeEnding).toHaveLength(0);
     });
 
@@ -87,14 +87,14 @@ describe('[UNIT] services/ExtensionBundler', () => {
             beforeParsing: expect.anything(),
             beforeRouting: expect.anything(),
             beforeRunning: expect.anything(),
-            beforeOutputing: expect.anything(),
+            beforeOutputting: expect.anything(),
             beforeEnding: expect.anything()
         });
 
         expect(bundle.interceptors.beforeParsing).toHaveLength(1);
         expect(bundle.interceptors.beforeRouting).toHaveLength(1);
         expect(bundle.interceptors.beforeRunning).toHaveLength(1);
-        expect(bundle.interceptors.beforeOutputing).toHaveLength(1);
+        expect(bundle.interceptors.beforeOutputting).toHaveLength(1);
         expect(bundle.interceptors.beforeEnding).toHaveLength(1);
 
         expect(bundle.interceptors.beforeParsing[0]).toEqual(
@@ -106,8 +106,8 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(bundle.interceptors.beforeRunning[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeRunning
         );
-        expect(bundle.interceptors.beforeOutputing[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeOutputing
+        expect(bundle.interceptors.beforeOutputting[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeOutputting
         );
         expect(bundle.interceptors.beforeEnding[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeEnding
@@ -135,14 +135,14 @@ describe('[UNIT] services/ExtensionBundler', () => {
             beforeParsing: expect.anything(),
             beforeRouting: expect.anything(),
             beforeRunning: expect.anything(),
-            beforeOutputing: expect.anything(),
+            beforeOutputting: expect.anything(),
             beforeEnding: expect.anything()
         });
 
         expect(bundle.interceptors.beforeParsing).toHaveLength(1);
         expect(bundle.interceptors.beforeRouting).toHaveLength(1);
         expect(bundle.interceptors.beforeRunning).toHaveLength(1);
-        expect(bundle.interceptors.beforeOutputing).toHaveLength(1);
+        expect(bundle.interceptors.beforeOutputting).toHaveLength(1);
         expect(bundle.interceptors.beforeEnding).toHaveLength(1);
 
         expect(bundle.interceptors.beforeParsing[0]).toEqual(
@@ -154,8 +154,8 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(bundle.interceptors.beforeRunning[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeRunning
         );
-        expect(bundle.interceptors.beforeOutputing[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeOutputing
+        expect(bundle.interceptors.beforeOutputting[0]).toEqual(
+            constants.extensions.b?.interceptors?.beforeOutputting
         );
         expect(bundle.interceptors.beforeEnding[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeEnding

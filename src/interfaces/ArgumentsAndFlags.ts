@@ -5,7 +5,7 @@ import type Flags from './Flags.js';
  * Represents a combination of arguments and flags.
  * All the inputs that a command can receive.
  */
-interface ParsedArguments {
+interface ArgumentsAndFlags {
     /**
      * The arguments that the command received.
      */
@@ -16,4 +16,4 @@ interface ParsedArguments {
     flags: Flags;
 }
 
-export default ParsedArguments;
+export default ArgumentsAndFlags;

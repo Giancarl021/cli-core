@@ -1,6 +1,8 @@
-import type AnyRecord from './AnyRecord.js';
-
-type DeepPartial<T extends AnyRecord> = {
+/**
+ * Represents a deeply partial object, with all
+ * nested properties being optional.
+ */
+type DeepPartial<T extends object> = {
     [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
 

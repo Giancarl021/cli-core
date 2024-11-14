@@ -4,7 +4,7 @@ import { isEmpty } from '../util/string.js';
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
 import type ParsedArguments from '../interfaces/ParsedArguments.js';
 import type Flags from '../interfaces/Flags.js';
-import type Args from '../interfaces/Args.js';
+import type Arguments from '../interfaces/Arguments.js';
 import type Nullable from '../interfaces/Nullable.js';
 
 export type ArgumentsOptions = Omit<CliCoreOptions['arguments'], 'flags'> & {
@@ -40,12 +40,12 @@ export default function Arguments(options: ArgumentsOptions) {
 
         if (!options.flags.parse || !prefixes.length) {
             return {
-                args: rawArgs,
+                arguments: rawArgs,
                 flags: {}
             };
         }
 
-        const args: Args = [];
+        const args: Arguments = [];
         const flags: Flags = {};
 
         let currentFlagName: Nullable<string> = null;
@@ -83,7 +83,7 @@ export default function Arguments(options: ArgumentsOptions) {
             }
         }
 
-        return { args, flags };
+        return { arguments: args, flags };
     }
 
     return {

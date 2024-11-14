@@ -1,11 +1,10 @@
-import AnyCallback from './AnyCallback.js';
-import type { CliCoreCommandThis } from './CliCoreCommand.js';
-
-export type BundledExtensionCallback = (
-    this: Pick<CliCoreCommandThis, 'appName' | 'helpers'>,
-    ...args: Parameters<AnyCallback>
-) => ReturnType<AnyCallback>;
-
+/**
+ * Interface for the CLI core command addons.
+ * This interface is meant to be augmented by extension
+ * packages, providing full TypeScript support for the
+ * CLI core extension.
+ */
+// eslint-disable-next-line
 interface CliCoreCommandAddons {}
 
 export default CliCoreCommandAddons;

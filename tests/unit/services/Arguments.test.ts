@@ -21,6 +21,7 @@ function options(
             prefixes: ['-', '--'],
             ignoreEmptyFlags: false,
             inferTypes: true,
+            helpFlags: [],
             ...flags
         }
     };
@@ -33,7 +34,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: [],
+            arguments: [],
             flags: {}
         });
     });
@@ -44,7 +45,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: ['a', 'b', 'c'],
+            arguments: ['a', 'b', 'c'],
             flags: {}
         });
     });
@@ -55,7 +56,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: [],
+            arguments: [],
             flags: {
                 a: null,
                 b: null,
@@ -72,7 +73,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: [],
+            arguments: [],
             flags: {
                 a: 1,
                 b: false,
@@ -87,7 +88,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: ['a', 'b'],
+            arguments: ['a', 'b'],
             flags: {
                 a: 1,
                 C: null
@@ -106,7 +107,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: ['a', 'b', 'c'],
+            arguments: ['a', 'b', 'c'],
             flags: {
                 c: 1,
                 k: null
@@ -124,7 +125,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: ['a', 'b', 'c', '-d', '1', '-e'],
+            arguments: ['a', 'b', 'c', '-d', '1', '-e'],
             flags: {}
         });
     });
@@ -157,7 +158,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: ['a', 'b', 'c'],
+            arguments: ['a', 'b', 'c'],
             flags: {
                 d: 1,
                 f: true,
@@ -196,7 +197,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: ['a', 'b', 'c'],
+            arguments: ['a', 'b', 'c'],
             flags: {
                 d: '1',
                 e: null,
@@ -236,7 +237,7 @@ describe('[UNIT] services/Arguments', () => {
         expect(args).toMatchObject(mockInstance);
 
         expect(args.parse()).toMatchObject({
-            args: ['a', 'b', 'c'],
+            arguments: ['a', 'b', 'c'],
             flags: {
                 d: 1,
                 e: null,

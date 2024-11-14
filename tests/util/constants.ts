@@ -1,8 +1,8 @@
 import type CliCoreExtension from '../../src/interfaces/CliCoreExtension.js';
-import type Args from '../../src/interfaces/Args.js';
+import type Arguments from '../../src/interfaces/Arguments.js';
 import type Flags from '../../src/interfaces/Flags.js';
 
-function createExecutionParameters(args: Args, flags: Flags) {
+function createExecutionParameters(args: Arguments, flags: Flags) {
     return {
         args,
         flags
@@ -50,7 +50,7 @@ export default {
                 beforeRunning(_, x) {
                     return x;
                 },
-                beforeOutputing(_, x) {
+                beforeOutputting(_, x) {
                     return x;
                 },
                 beforeEnding(_) {}

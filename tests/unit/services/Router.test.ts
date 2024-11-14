@@ -34,7 +34,7 @@ describe('[UNIT] services/Router', () => {
             status: 'help',
             commandChain: [],
             result: null,
-            actualArgs: []
+            commandArguments: []
         });
     });
 
@@ -47,21 +47,21 @@ describe('[UNIT] services/Router', () => {
             status: 'help',
             commandChain: [],
             result: null,
-            actualArgs: []
+            commandArguments: []
         });
 
         expect(router.navigate([], { h: true })).toMatchObject({
             status: 'help',
             commandChain: [],
             result: null,
-            actualArgs: []
+            commandArguments: []
         });
 
         expect(router.navigate([], { help: true, h: true })).toMatchObject({
             status: 'help',
             commandChain: [],
             result: null,
-            actualArgs: []
+            commandArguments: []
         });
     });
 
@@ -74,14 +74,14 @@ describe('[UNIT] services/Router', () => {
             status: 'help',
             commandChain: [],
             result: null,
-            actualArgs: []
+            commandArguments: []
         });
 
         expect(router.navigate(['invalid', 'route'], {})).toMatchObject({
             status: 'error',
             commandChain: ['invalid'],
             result: new Error('Command "invalid" not found'),
-            actualArgs: []
+            commandArguments: []
         });
 
         expect(
@@ -90,7 +90,7 @@ describe('[UNIT] services/Router', () => {
             status: 'error',
             commandChain: ['invalid'],
             result: new Error('Command "invalid" not found'),
-            actualArgs: []
+            commandArguments: []
         });
     });
 
@@ -119,7 +119,7 @@ describe('[UNIT] services/Router', () => {
             result: new Error(
                 'Command "a d" not found. There is no "d" branch'
             ),
-            actualArgs: []
+            commandArguments: []
         });
 
         expect(router.navigate(['a', 'c', 'd', 'f'], {})).toMatchObject({
@@ -128,7 +128,7 @@ describe('[UNIT] services/Router', () => {
             result: new Error(
                 'Command "a c d f" not found. There is no "f" branch'
             ),
-            actualArgs: []
+            commandArguments: []
         });
     });
 
@@ -144,21 +144,21 @@ describe('[UNIT] services/Router', () => {
             status: 'callback',
             commandChain: [],
             result: commands,
-            actualArgs: ['a', 'b', 'c']
+            commandArguments: ['a', 'b', 'c']
         });
 
         expect(router.navigate([], { help: true })).toMatchObject({
             status: 'help',
             commandChain: [],
             result: commands,
-            actualArgs: []
+            commandArguments: []
         });
 
         expect(router.navigate(['a', 'b', 'c'], { help: true })).toMatchObject({
             status: 'help',
             commandChain: [],
             result: commands,
-            actualArgs: ['a', 'b', 'c']
+            commandArguments: ['a', 'b', 'c']
         });
     });
 
@@ -188,7 +188,7 @@ describe('[UNIT] services/Router', () => {
             status: 'callback',
             commandChain: ['a', 'b'],
             result: commands.a.b,
-            actualArgs: ['arg1', 'arg2', 'arg3']
+            commandArguments: ['arg1', 'arg2', 'arg3']
         });
 
         expect(
@@ -197,7 +197,7 @@ describe('[UNIT] services/Router', () => {
             status: 'callback',
             commandChain: ['a', 'c', 'd', 'e'],
             result: commands.a.c.d.e,
-            actualArgs: ['arg1', 'arg2', 'arg3']
+            commandArguments: ['arg1', 'arg2', 'arg3']
         });
     });
 });

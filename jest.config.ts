@@ -14,21 +14,31 @@ const config: JestConfigWithTsJest = {
         'node',
         'd.ts'
     ],
+    testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/lib/'],
     extensionsToTreatAsEsm: ['.ts'],
     moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.js$': '$1'
     },
     transform: {
-        // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
-        // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
-        '^.+\\.(j|t)sx?$': [
+        'node_modules/.+\\.(j|t)sx?$': 'ts-jest',
+        '^.+\\.tsx?$': [
             'ts-jest',
             {
                 useESM: true,
                 tsconfig: './tsconfig.json'
             }
+        ],
+        '^.+\\.jsx?$': [
+            'babel-jest',
+            { plugins: ['@babel/plugin-transform-modules-commonjs'] }
         ]
-    }
+    },
+    collectCoverageFrom: ['<rootDir>/src/**/*.ts', '<rootDir>/index.ts'],
+    coveragePathIgnorePatterns: [
+        '<rootDir>/node_modules/',
+        '<rootDir>/tests/',
+        '<rootDir>/lib/'
+    ]
 };
 
 export default config;

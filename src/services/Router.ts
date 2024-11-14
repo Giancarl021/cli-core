@@ -1,4 +1,4 @@
-import type Args from '../interfaces/Args.js';
+import type Arguments from '../interfaces/Arguments.js';
 import type Flags from '../interfaces/Flags.js';
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
 import type RoutingResult from '../interfaces/RoutingResult.js';
@@ -11,18 +11,18 @@ export type RouterInstance = ReturnType<typeof Router>;
 export type RouterOptions = Pick<CliCoreOptions, 'appName' | 'commands'> & {
     arguments: {
         flags: {
-            help: CliCoreOptions['arguments']['flags']['help'];
+            help: CliCoreOptions['arguments']['flags']['helpFlags'];
         };
     };
 };
 
 export default function Router(options: RouterOptions) {
-    function navigate(args: Args, flags: Flags): RoutingResult {
+    function navigate(args: Arguments, flags: Flags): RoutingResult {
         const result: RoutingResult = {
             status: 'error',
             commandChain: [],
             result: null,
-            actualArgs: []
+            commandArguments: []
         };
 
         let currentCommand: Undefinable<CliCoreCommand> = options.commands;
@@ -62,7 +62,7 @@ export default function Router(options: RouterOptions) {
 
             if (typeof currentCommand === 'function') {
                 result.status = result.status === 'help' ? 'help' : 'callback';
-                result.actualArgs = index ? args.slice(index) : args;
+                result.commandArguments = index ? args.slice(index) : args;
                 result.result = currentCommand;
 
                 return true;

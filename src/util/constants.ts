@@ -7,13 +7,14 @@ const defaultOptions: CliCoreOptions = {
         debugMode: false,
         colorfulOutput: false
     },
+    help: {},
     commands: {},
     extensions: [],
     arguments: {
         origin: process.argv,
         ignoreFirst: 2,
         flags: {
-            help: ['h', 'help', '?'],
+            helpFlags: ['h', 'help', '?'],
             parse: true,
             inferTypes: true,
             prefixes: ['-', '--'],
