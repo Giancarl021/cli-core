@@ -1,5 +1,6 @@
 import fillObject from 'fill-object';
 import constants from './src/util/constants.js';
+import Logger from './src/services/Logger.js';
 
 import type CliCoreOptions from './src/interfaces/CliCoreOptions.js';
 import type { PartialCliCoreOptions } from './src/interfaces/CliCoreOptions.js';
@@ -8,10 +9,17 @@ import type CliCoreExtension from './src/interfaces/CliCoreExtension.js';
 import type CliCoreCommandAddons from './src/interfaces/CliCoreCommandAddons.js';
 
 export default function cliCore(options: PartialCliCoreOptions) {
-    const _options = () =>
-        fillObject(options as CliCoreOptions, constants.defaultOptions, true);
+    const _options = fillObject(
+        options as CliCoreOptions,
+        constants.defaultOptions,
+        true
+    );
 
     console.log(_options);
+
+    function defineLogger(origin: string) {
+        return Logger(_options, origin);
+    }
 }
 
 /**

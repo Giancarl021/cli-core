@@ -9,6 +9,10 @@ export type LoggerInstance = ReturnType<typeof Logger>;
 
 type MessageLogLevel = 'debug' | 'info' | 'warn' | 'error' | 'data';
 
+export function LoggerFactory(options: LoggerOptions) {
+    return (origin: string) => Logger(options, origin);
+}
+
 export default function Logger(options: LoggerOptions, origin: string) {
     const chalk = new Chalk({
         level: options.behavior.colorfulOutput ? undefined : 0

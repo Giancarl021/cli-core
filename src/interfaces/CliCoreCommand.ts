@@ -1,4 +1,5 @@
 import type { CommandHelpersInstance } from '../services/CommandHelpers.js';
+import { LoggerInstance } from '../services/Logger.js';
 import type Arguments from './Arguments.js';
 import type Awaitable from './Awaitable.js';
 import type CliCoreCommandAddons from './CliCoreCommandAddons.js';
@@ -22,6 +23,11 @@ export interface CliCoreCommandThis {
      * Helpers for parsing and outputting data
      */
     helpers: CommandHelpersInstance;
+    /**
+     * The logger instance for the command,
+     * allowing colorful and formatted output.
+     */
+    logger: LoggerInstance;
 }
 
 /**
