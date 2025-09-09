@@ -9,7 +9,7 @@ interface ParsedArguments {
     /**
      * The arguments that the command received.
      */
-    arguments: Arguments;
+    args: Arguments;
     /**
      * The flags that the command received.
      */

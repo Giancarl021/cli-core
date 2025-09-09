@@ -7,12 +7,11 @@ import type Flags from '../interfaces/Flags.js';
 import type Arguments from '../interfaces/Arguments.js';
 import type Nullable from '../interfaces/Nullable.js';
 
-export type ArgumentsOptions = Omit<CliCoreOptions['arguments'], 'flags'> & {
-    flags: Omit<CliCoreOptions['arguments']['flags'], 'help'>;
-};
-export type ArgumentsInstance = ReturnType<typeof Arguments>;
+export type ParserOptions = CliCoreOptions['arguments'];
 
-export default function Arguments(options: ArgumentsOptions) {
+export type ParserInstance = ReturnType<typeof Parser>;
+
+export default function Parser(options: ParserOptions) {
     const prefixes = options.flags.prefixes
         .filter(prefix => !isEmpty(prefix))
         .sort((a, b) => b.length - a.length);
@@ -40,7 +39,7 @@ export default function Arguments(options: ArgumentsOptions) {
 
         if (!options.flags.parse || !prefixes.length) {
             return {
-                arguments: rawArgs,
+                args: rawArgs,
                 flags: {}
             };
         }
@@ -83,7 +82,7 @@ export default function Arguments(options: ArgumentsOptions) {
             }
         }
 
-        return { arguments: args, flags };
+        return { args, flags };
     }
 
     return {

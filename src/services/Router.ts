@@ -5,20 +5,18 @@ import type RoutingResult from '../interfaces/RoutingResult.js';
 import type Undefinable from '../interfaces/Undefinable.js';
 import type CliCoreCommand from '../interfaces/CliCoreCommand.js';
 import type { CliCoreCommandGroup } from '../interfaces/CliCoreCommand.js';
+import type { InternalRoutingResult } from '../interfaces/RoutingResult.js';
 
 export type RouterInstance = ReturnType<typeof Router>;
 
-export type RouterOptions = Pick<CliCoreOptions, 'appName' | 'commands'> & {
-    arguments: {
-        flags: {
-            help: CliCoreOptions['arguments']['flags']['helpFlags'];
-        };
-    };
-};
+export type RouterOptions = Pick<
+    CliCoreOptions,
+    'appName' | 'commands' | 'arguments'
+>;
 
 export default function Router(options: RouterOptions) {
     function navigate(args: Arguments, flags: Flags): RoutingResult {
-        const result: RoutingResult = {
+        const result: InternalRoutingResult = {
             status: 'error',
             commandChain: [],
             result: null,
@@ -27,7 +25,7 @@ export default function Router(options: RouterOptions) {
 
         let currentCommand: Undefinable<CliCoreCommand> = options.commands;
 
-        for (const flag of options.arguments.flags.help) {
+        for (const flag of options.arguments.flags.helpFlags) {
             if (flag in flags) {
                 result.status = 'help';
                 break;
@@ -35,7 +33,7 @@ export default function Router(options: RouterOptions) {
         }
 
         for (let i = 0; i < args.length; i++) {
-            if (_isEndpoint(i)) return result;
+            if (_isEndpoint(i)) return result as RoutingResult;
 
             const arg = args[i];
 
@@ -48,7 +46,7 @@ export default function Router(options: RouterOptions) {
             result.status = 'help';
         }
 
-        return result;
+        return result as RoutingResult;
 
         function _isEndpoint(index?: number): boolean {
             if (typeof currentCommand === 'undefined') {

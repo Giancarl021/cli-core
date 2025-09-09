@@ -11,16 +11,16 @@ const mockInstance: MockService<typeof Router> = {
 
 function options(
     commands: RouterOptions['commands'] = {},
-    helpFlags: RouterOptions['arguments']['flags']['help'] = ['h', 'help']
+    helpFlags: RouterOptions['arguments']['flags']['helpFlags'] = ['h', 'help']
 ): RouterOptions {
     return {
         appName: constants.appName,
         commands,
         arguments: {
             flags: {
-                help: helpFlags
+                helpFlags: helpFlags
             }
-        }
+        } as RouterOptions['arguments']
     };
 }
 
