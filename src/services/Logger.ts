@@ -43,8 +43,6 @@ export default function Logger(options: LoggerOptions, origin: string) {
             case 'data':
                 message = chalk.bgWhiteBright.black(levelFormatted);
                 break;
-            default:
-                throw new Error(`Unknown log level: ${level}`);
         }
 
         return message + spacing;
@@ -77,21 +75,23 @@ export default function Logger(options: LoggerOptions, origin: string) {
     }
 
     function formatJson(data: string | object): string {
-        const message = colorize(data, {
-            indent: 2,
-            colors: {
-                BooleanLiteral: chalk.magentaBright,
-                Brace: chalk.whiteBright,
-                NullLiteral: chalk.gray,
-                NumberLiteral: chalk.greenBright,
-                StringLiteral: chalk.yellowBright,
-                Bracket: chalk.whiteBright,
-                Colon: chalk.white,
-                Comma: chalk.white,
-                StringKey: chalk.blueBright,
-                Whitespace: chalk.gray
-            }
-        });
+        const message = options.behavior.colorfulOutput
+            ? colorize(data, {
+                  indent: 2,
+                  colors: {
+                      BooleanLiteral: chalk.magentaBright,
+                      Brace: chalk.whiteBright,
+                      NullLiteral: chalk.gray,
+                      NumberLiteral: chalk.greenBright,
+                      StringLiteral: chalk.yellowBright,
+                      Bracket: chalk.whiteBright,
+                      Colon: chalk.white,
+                      Comma: chalk.white,
+                      StringKey: chalk.blueBright,
+                      Whitespace: chalk.gray
+                  }
+              })
+            : JSON.stringify(data, null, 2);
 
         return _formatMessagePrefix('data') + '\n' + message;
     }

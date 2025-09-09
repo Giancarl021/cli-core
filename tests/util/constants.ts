@@ -50,7 +50,7 @@ export default {
                 beforeRunning(_, x) {
                     return x;
                 },
-                beforeOutputting(_, x) {
+                beforePrinting(_, x) {
                     return x;
                 },
                 beforeEnding(_) {}

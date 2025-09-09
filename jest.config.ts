@@ -2,7 +2,7 @@ import type { JestConfigWithTsJest } from 'ts-jest';
 
 const config: JestConfigWithTsJest = {
     testMatch: ['<rootDir>/tests/**/*.test.ts'],
-    transformIgnorePatterns: [],
+    transformIgnorePatterns: ['/node_modules/(?!@giancarl021/type-inference)'],
     moduleFileExtensions: [
         'js',
         'mjs',
@@ -21,6 +21,7 @@ const config: JestConfigWithTsJest = {
     },
     transform: {
         'node_modules/.+\\.(j|t)sx?$': 'ts-jest',
+        'node_modules/@giancarl021/type-inference/.+\\.(j|t)sx?$': 'ts-jest',
         '^.+\\.tsx?$': [
             'ts-jest',
             {

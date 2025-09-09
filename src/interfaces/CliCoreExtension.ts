@@ -46,13 +46,13 @@ export interface CliCoreExtensionInterceptors {
         route: RoutingResult
     ): Awaitable<RoutingResult>;
     /**
-     * Called before outputting the command. This interceptor can be called
-     * to change the output of the command before it's outputted to the terminal.
+     * Called before printing the command output. This interceptor can be called
+     * to change the output of the command before it's printed to the terminal.
      * @param options The CLI Core options passed by the user
-     * @param output The output of the command before outputting
-     * @returns The output to be used in the outputting
+     * @param output The output of the command before printing
+     * @returns The output to be used in the printing
      */
-    beforeOutputting(
+    beforePrinting(
         options: CliCoreOptions,
         output: string
     ): Awaitable<string>;
