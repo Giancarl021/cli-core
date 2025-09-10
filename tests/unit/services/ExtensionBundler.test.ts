@@ -6,7 +6,8 @@ import type { CommandHelpersInstance } from '../../../src/services/CommandHelper
 import type { MockService } from '../../util/types.js';
 
 const mockInstance: MockService<typeof ExtensionBundler> = {
-    bundle: expect.any(Function)
+    bundle: expect.any(Function),
+    getInterceptors: expect.any(Function)
 };
 
 const mockHelpers = {} as CommandHelpersInstance;
@@ -21,10 +22,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
 
         const bundle = bundler.bundle(mockHelpers);
+        const interceptors = bundler.getInterceptors();
 
-        expect(bundle.commandAddons).toEqual({});
+        expect(bundle).toEqual({});
 
-        expect(bundle.interceptors).toMatchObject({
+        expect(interceptors).toMatchObject({
             beforeParsing: expect.anything(),
             beforeRouting: expect.anything(),
             beforeRunning: expect.anything(),
@@ -32,11 +34,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
             beforeEnding: expect.anything()
         });
 
-        expect(bundle.interceptors.beforeParsing).toHaveLength(0);
-        expect(bundle.interceptors.beforeRouting).toHaveLength(0);
-        expect(bundle.interceptors.beforeRunning).toHaveLength(0);
-        expect(bundle.interceptors.beforePrinting).toHaveLength(0);
-        expect(bundle.interceptors.beforeEnding).toHaveLength(0);
+        expect(interceptors.beforeParsing).toHaveLength(0);
+        expect(interceptors.beforeRouting).toHaveLength(0);
+        expect(interceptors.beforeRunning).toHaveLength(0);
+        expect(interceptors.beforePrinting).toHaveLength(0);
+        expect(interceptors.beforeEnding).toHaveLength(0);
     });
 
     test('Single extension with only command addons', () => {
@@ -48,15 +50,16 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
 
         const bundle = bundler.bundle(mockHelpers);
+        const interceptors = bundler.getInterceptors();
 
-        expect(bundle.commandAddons).toEqual({
+        expect(bundle).toEqual({
             extensionA: {
                 methodA: expect.any(Function),
                 valueA: 'a'
             }
         });
 
-        expect(bundle.interceptors).toMatchObject({
+        expect(interceptors).toMatchObject({
             beforeParsing: expect.anything(),
             beforeRouting: expect.anything(),
             beforeRunning: expect.anything(),
@@ -64,11 +67,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
             beforeEnding: expect.anything()
         });
 
-        expect(bundle.interceptors.beforeParsing).toHaveLength(0);
-        expect(bundle.interceptors.beforeRouting).toHaveLength(0);
-        expect(bundle.interceptors.beforeRunning).toHaveLength(0);
-        expect(bundle.interceptors.beforePrinting).toHaveLength(0);
-        expect(bundle.interceptors.beforeEnding).toHaveLength(0);
+        expect(interceptors.beforeParsing).toHaveLength(0);
+        expect(interceptors.beforeRouting).toHaveLength(0);
+        expect(interceptors.beforeRunning).toHaveLength(0);
+        expect(interceptors.beforePrinting).toHaveLength(0);
+        expect(interceptors.beforeEnding).toHaveLength(0);
     });
 
     test('Single extension with only interceptors', () => {
@@ -80,10 +83,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
 
         const bundle = bundler.bundle(mockHelpers);
+        const interceptors = bundler.getInterceptors();
 
-        expect(bundle.commandAddons).toEqual({});
+        expect(bundle).toEqual({});
 
-        expect(bundle.interceptors).toMatchObject({
+        expect(interceptors).toMatchObject({
             beforeParsing: expect.anything(),
             beforeRouting: expect.anything(),
             beforeRunning: expect.anything(),
@@ -91,25 +95,25 @@ describe('[UNIT] services/ExtensionBundler', () => {
             beforeEnding: expect.anything()
         });
 
-        expect(bundle.interceptors.beforeParsing).toHaveLength(1);
-        expect(bundle.interceptors.beforeRouting).toHaveLength(1);
-        expect(bundle.interceptors.beforeRunning).toHaveLength(1);
-        expect(bundle.interceptors.beforePrinting).toHaveLength(1);
-        expect(bundle.interceptors.beforeEnding).toHaveLength(1);
+        expect(interceptors.beforeParsing).toHaveLength(1);
+        expect(interceptors.beforeRouting).toHaveLength(1);
+        expect(interceptors.beforeRunning).toHaveLength(1);
+        expect(interceptors.beforePrinting).toHaveLength(1);
+        expect(interceptors.beforeEnding).toHaveLength(1);
 
-        expect(bundle.interceptors.beforeParsing[0]).toEqual(
+        expect(interceptors.beforeParsing[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeParsing
         );
-        expect(bundle.interceptors.beforeRouting[0]).toEqual(
+        expect(interceptors.beforeRouting[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeRouting
         );
-        expect(bundle.interceptors.beforeRunning[0]).toEqual(
+        expect(interceptors.beforeRunning[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeRunning
         );
-        expect(bundle.interceptors.beforePrinting[0]).toEqual(
+        expect(interceptors.beforePrinting[0]).toEqual(
             constants.extensions.b?.interceptors?.beforePrinting
         );
-        expect(bundle.interceptors.beforeEnding[0]).toEqual(
+        expect(interceptors.beforeEnding[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeEnding
         );
     });
@@ -123,15 +127,16 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
 
         const bundle = bundler.bundle(mockHelpers);
+        const interceptors = bundler.getInterceptors();
 
-        expect(bundle.commandAddons).toEqual({
+        expect(bundle).toEqual({
             extensionA: {
                 methodA: expect.any(Function),
                 valueA: 'a'
             }
         });
 
-        expect(bundle.interceptors).toMatchObject({
+        expect(interceptors).toMatchObject({
             beforeParsing: expect.anything(),
             beforeRouting: expect.anything(),
             beforeRunning: expect.anything(),
@@ -139,25 +144,26 @@ describe('[UNIT] services/ExtensionBundler', () => {
             beforeEnding: expect.anything()
         });
 
-        expect(bundle.interceptors.beforeParsing).toHaveLength(1);
-        expect(bundle.interceptors.beforeRouting).toHaveLength(1);
-        expect(bundle.interceptors.beforeRunning).toHaveLength(1);
-        expect(bundle.interceptors.beforePrinting).toHaveLength(1);
-        expect(bundle.interceptors.beforeEnding).toHaveLength(1);
+        expect(interceptors.beforeParsing).toHaveLength(1);
+        expect(interceptors.beforeParsing).toHaveLength(1);
+        expect(interceptors.beforeRouting).toHaveLength(1);
+        expect(interceptors.beforeRunning).toHaveLength(1);
+        expect(interceptors.beforePrinting).toHaveLength(1);
+        expect(interceptors.beforeEnding).toHaveLength(1);
 
-        expect(bundle.interceptors.beforeParsing[0]).toEqual(
+        expect(interceptors.beforeParsing[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeParsing
         );
-        expect(bundle.interceptors.beforeRouting[0]).toEqual(
+        expect(interceptors.beforeRouting[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeRouting
         );
-        expect(bundle.interceptors.beforeRunning[0]).toEqual(
+        expect(interceptors.beforeRunning[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeRunning
         );
-        expect(bundle.interceptors.beforePrinting[0]).toEqual(
+        expect(interceptors.beforePrinting[0]).toEqual(
             constants.extensions.b?.interceptors?.beforePrinting
         );
-        expect(bundle.interceptors.beforeEnding[0]).toEqual(
+        expect(interceptors.beforeEnding[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeEnding
         );
     });

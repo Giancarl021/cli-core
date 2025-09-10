@@ -47,6 +47,24 @@ export interface FlagsDescriptor {
 }
 
 /**
+ * A descriptor for standard IO usage
+ */
+export interface StdioDescriptor {
+    /**
+     * The stdin usage description for the command
+     */
+    stdin?: string;
+    /**
+     * The stdout usage description for the command
+     */
+    stdout?: string;
+    /**
+     * The stderr usage description for the command
+     */
+    stderr?: string;
+}
+
+/**
  * A descriptor for a command
  */
 export interface CommandDescriptor {
@@ -62,6 +80,10 @@ export interface CommandDescriptor {
      * The flags that the command can receive
      */
     flags?: FlagsDescriptor;
+    /**
+     * The standard IO usage for the command
+     */
+    stdio?: StdioDescriptor;
 }
 
 /**
@@ -84,7 +106,7 @@ export interface CommandGroupDescriptor {
 }
 /**
  * A descriptor for the entire application.
- * If follows this [JSON Schema](https://gist.githubusercontent.com/Giancarl021/127020c9cecb032beff587e308bec4ca/raw/af14cd087c7f3f2f1b1d6a6daec6f82699a44973/@giancarl021__cli-core__help-descriptor.schema.json)
+ * If follows this [JSON Schema](https://gist.githubusercontent.com/Giancarl021/127020c9cecb032beff587e308bec4ca/raw/2a64546e116eae6577c96464abffc485a06d735f/help-descriptor.schema.json)
  */
 interface HelpDescriptor {
     [commandName: string]: CommandGroupDescriptor | CommandDescriptor | string;

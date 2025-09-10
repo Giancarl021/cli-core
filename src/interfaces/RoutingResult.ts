@@ -60,7 +60,7 @@ type RoutingResult = {
 
 /**
  * An internal version of RoutingResult to avoid type errors when building the result object.
-*/
+ */
 export type InternalRoutingResult = Omit<RoutingResult, 'result' | 'status'> & {
     /**
      * The result of the command. It can be an error, the callback function, or null.
@@ -73,6 +73,6 @@ export type InternalRoutingResult = Omit<RoutingResult, 'result' | 'status'> & {
      * * `help`: The help flag was used, so no command is executed.
      */
     status: 'error' | 'help' | 'callback';
-}
+};
 
 export default RoutingResult;

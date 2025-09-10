@@ -2,7 +2,8 @@ import type CliCoreOptions from './CliCoreOptions.js';
 import type { CliCoreCommandThis } from './CliCoreCommand.js';
 import type Awaitable from './Awaitable.js';
 import type RoutingResult from './RoutingResult.js';
-import type ArgumentsAndFlags from './ArgumentsAndFlags.js';
+import type ParsedArguments from './ParsedArguments.js';
+import type constants from '../util/constants.js';
 
 /**
  * Represents the interceptors that can be used in a CLI Core extension.
@@ -31,8 +32,8 @@ export interface CliCoreExtensionInterceptors {
      */
     beforeRouting(
         options: CliCoreOptions,
-        input: ArgumentsAndFlags
-    ): Awaitable<ArgumentsAndFlags>;
+        input: ParsedArguments
+    ): Awaitable<ParsedArguments>;
     /**
      * Called before running the command. This interceptor can be called
      * to change the routing result before running the command, such as
@@ -54,8 +55,8 @@ export interface CliCoreExtensionInterceptors {
      */
     beforePrinting(
         options: CliCoreOptions,
-        output: string
-    ): Awaitable<string>;
+        output: string | typeof constants.noOutputSymbol
+    ): Awaitable<string | typeof constants.noOutputSymbol>;
     /**
      * Called before ending the CLI Core instance. This interceptor can be called
      * to do some cleanup before the CLI Core instance ends, such as closing files

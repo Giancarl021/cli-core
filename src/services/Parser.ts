@@ -34,9 +34,7 @@ export default function Parser(options: ParserOptions) {
         return null;
     }
 
-    function parse(): ParsedArguments {
-        const rawArgs = options.origin.slice(options.ignoreFirst);
-
+    function parse(rawArgs: string[]): ParsedArguments {
         if (!options.flags.parse || !prefixes.length) {
             return {
                 args: rawArgs,

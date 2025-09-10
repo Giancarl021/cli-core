@@ -13,14 +13,8 @@ export type ExtensionBundlerOptions = Pick<
 
 export type ExtensionBundlerInstance = ReturnType<typeof ExtensionBundler>;
 
-export interface BundleResult {
-    commandAddons: CliCoreCommandAddons;
-    interceptors: FlowInterceptors;
-}
-
 export default function ExtensionBundler(options: ExtensionBundlerOptions) {
-    function bundle(helpers: CommandHelpersInstance): BundleResult {
-        const commandAddons: CliCoreCommandAddons = {};
+    function getInterceptors(): FlowInterceptors {
         const interceptors: FlowInterceptors = {
             beforeParsing: [],
             beforeRouting: [],
@@ -28,6 +22,41 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
             beforePrinting: [],
             beforeEnding: []
         };
+
+        for (const extension of options.extensions) {
+            if (extension.interceptors) {
+                if (extension.interceptors.beforeParsing)
+                    interceptors.beforeParsing.push(
+                        extension.interceptors.beforeParsing
+                    );
+
+                if (extension.interceptors.beforeRouting)
+                    interceptors.beforeRouting.push(
+                        extension.interceptors.beforeRouting
+                    );
+
+                if (extension.interceptors.beforeRunning)
+                    interceptors.beforeRunning.push(
+                        extension.interceptors.beforeRunning
+                    );
+
+                if (extension.interceptors.beforePrinting)
+                    interceptors.beforePrinting.push(
+                        extension.interceptors.beforePrinting
+                    );
+
+                if (extension.interceptors.beforeEnding)
+                    interceptors.beforeEnding.push(
+                        extension.interceptors.beforeEnding
+                    );
+            }
+        }
+
+        return interceptors;
+    }
+
+    function bundle(helpers: CommandHelpersInstance): CliCoreCommandAddons {
+        const commandAddons: CliCoreCommandAddons = {};
 
         for (const extension of options.extensions) {
             const name = extension.name as keyof CliCoreCommandAddons;
@@ -65,45 +94,16 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
                     `Extension "${name}" does not have any command bundle nor flow interceptors`
                 );
 
-            if (extension.interceptors) {
-                if (extension.interceptors.beforeParsing)
-                    interceptors.beforeParsing.push(
-                        extension.interceptors.beforeParsing
-                    );
-
-                if (extension.interceptors.beforeRouting)
-                    interceptors.beforeRouting.push(
-                        extension.interceptors.beforeRouting
-                    );
-
-                if (extension.interceptors.beforeRunning)
-                    interceptors.beforeRunning.push(
-                        extension.interceptors.beforeRunning
-                    );
-
-                if (extension.interceptors.beforePrinting)
-                    interceptors.beforePrinting.push(
-                        extension.interceptors.beforePrinting
-                    );
-
-                if (extension.interceptors.beforeEnding)
-                    interceptors.beforeEnding.push(
-                        extension.interceptors.beforeEnding
-                    );
-            }
-
             if (!isEmpty(extensionBundle))
                 commandAddons[name] =
                     extensionBundle as CliCoreCommandAddons[typeof name];
         }
 
-        return {
-            commandAddons,
-            interceptors
-        };
+        return commandAddons;
     }
 
     return {
-        bundle
+        bundle,
+        getInterceptors
     };
 }

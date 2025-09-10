@@ -33,29 +33,31 @@ describe('[UNIT] services/Arguments', () => {
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse([])).toMatchObject({
             args: [],
             flags: {}
         });
     });
 
     test('Only arguments', () => {
-        const parser = Parser(options(['a', 'b', 'c']));
+        const rawArgs = ['a', 'b', 'c'];
+        const parser = Parser(options(rawArgs));
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: ['a', 'b', 'c'],
             flags: {}
         });
     });
 
     test('Flags without values', () => {
-        const parser = Parser(options(['--a', '-b', '-C']));
+        const rawArgs = ['--a', '-b', '-C'];
+        const parser = Parser(options(rawArgs));
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: [],
             flags: {
                 a: null,
@@ -66,13 +68,12 @@ describe('[UNIT] services/Arguments', () => {
     });
 
     test('Flags with values', () => {
-        const parser = Parser(
-            options(['--a', '1', '-b', 'false', '-C', 'text'])
-        );
+        const rawArgs = ['--a', '1', '-b', 'false', '-C', 'text'];
+        const parser = Parser(options(rawArgs));
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: [],
             flags: {
                 a: 1,
@@ -83,11 +84,12 @@ describe('[UNIT] services/Arguments', () => {
     });
 
     test('Mixed values', () => {
-        const parser = Parser(options(['a', 'b', '-a', '1', '-C']));
+        const rawArgs = ['a', 'b', '-a', '1', '-C'];
+        const parser = Parser(options(rawArgs));
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: ['a', 'b'],
             flags: {
                 a: 1,
@@ -97,7 +99,8 @@ describe('[UNIT] services/Arguments', () => {
     });
 
     test('Single binary arguments', () => {
-        const _options = options(['a', 'b', 'c', '-c', '1', '-k']);
+        const rawArgs = ['a', 'b', 'c', '-c', '1', '-k'];
+        const _options = options(rawArgs);
 
         _options.ignoreFirst = 1;
         _options.origin.shift();
@@ -106,7 +109,7 @@ describe('[UNIT] services/Arguments', () => {
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: ['a', 'b', 'c'],
             flags: {
                 c: 1,
@@ -116,48 +119,47 @@ describe('[UNIT] services/Arguments', () => {
     });
 
     test('No flags parsing', () => {
+        const rawArgs = ['a', 'b', 'c', '-d', '1', '-e'];
         const parser = Parser(
-            options(['a', 'b', 'c', '-d', '1', '-e'], {
+            options(rawArgs, {
                 parse: false
             })
         );
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: ['a', 'b', 'c', '-d', '1', '-e'],
             flags: {}
         });
     });
 
     test('No empty flags', () => {
+        const rawArgs = [
+            'a',
+            'b',
+            'c',
+            '-d',
+            '1',
+            '-e',
+            '-f',
+            'true',
+            '-g',
+            'null',
+            '-h',
+            'undefined',
+            '-i',
+            'abc'
+        ];
         const parser = Parser(
-            options(
-                [
-                    'a',
-                    'b',
-                    'c',
-                    '-d',
-                    '1',
-                    '-e',
-                    '-f',
-                    'true',
-                    '-g',
-                    'null',
-                    '-h',
-                    'undefined',
-                    '-i',
-                    'abc'
-                ],
-                {
-                    ignoreEmptyFlags: true
-                }
-            )
+            options(rawArgs, {
+                ignoreEmptyFlags: true
+            })
         );
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: ['a', 'b', 'c'],
             flags: {
                 d: 1,
@@ -170,33 +172,31 @@ describe('[UNIT] services/Arguments', () => {
     });
 
     test('No flag type inference', () => {
+        const rawArgs = [
+            'a',
+            'b',
+            'c',
+            '-d',
+            '1',
+            '-e',
+            '-f',
+            'true',
+            '-g',
+            'null',
+            '-h',
+            'undefined',
+            '-i',
+            'abc'
+        ];
         const parser = Parser(
-            options(
-                [
-                    'a',
-                    'b',
-                    'c',
-                    '-d',
-                    '1',
-                    '-e',
-                    '-f',
-                    'true',
-                    '-g',
-                    'null',
-                    '-h',
-                    'undefined',
-                    '-i',
-                    'abc'
-                ],
-                {
-                    inferTypes: false
-                }
-            )
+            options(rawArgs, {
+                inferTypes: false
+            })
         );
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: ['a', 'b', 'c'],
             flags: {
                 d: '1',
@@ -210,33 +210,31 @@ describe('[UNIT] services/Arguments', () => {
     });
 
     test('Different prefixes', () => {
+        const rawArgs = [
+            'a',
+            'b',
+            'c',
+            '#d',
+            '1',
+            '@@e',
+            '#f',
+            'true',
+            '#g',
+            'null',
+            '@@h',
+            'undefined',
+            '#i',
+            'abc'
+        ];
         const parser = Parser(
-            options(
-                [
-                    'a',
-                    'b',
-                    'c',
-                    '#d',
-                    '1',
-                    '@@e',
-                    '#f',
-                    'true',
-                    '#g',
-                    'null',
-                    '@@h',
-                    'undefined',
-                    '#i',
-                    'abc'
-                ],
-                {
-                    prefixes: ['#', '@@']
-                }
-            )
+            options(rawArgs, {
+                prefixes: ['#', '@@']
+            })
         );
 
         expect(parser).toMatchObject(mockInstance);
 
-        expect(parser.parse()).toMatchObject({
+        expect(parser.parse(rawArgs)).toMatchObject({
             args: ['a', 'b', 'c'],
             flags: {
                 d: 1,

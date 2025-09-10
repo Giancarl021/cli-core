@@ -10,5 +10,7 @@ export type MockInstance<T extends Record<string, AnyCallback>> = Record<
 >;
 
 export type MockService<
-    T extends (..._args: Parameters<AnyCallback>) => Record<string, AnyCallback | AnyRecord>
+    T extends (
+        ..._args: Parameters<AnyCallback>
+    ) => Record<string, AnyCallback | AnyRecord>
 > = Record<keyof ReturnType<T>, FunctionMatcher>;

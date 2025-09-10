@@ -1,5 +1,7 @@
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
 
+const noOutputSymbol: unique symbol = Symbol('no-output');
+
 const defaultOptions: CliCoreOptions = {
     appName: 'cli-core-application',
     appDescription: null,
@@ -24,6 +26,7 @@ const defaultOptions: CliCoreOptions = {
 };
 
 export default {
+    noOutputSymbol,
     defaultOptions,
     extensions: {
         nameRegex: /^[_A-Z]+[_A-Z0-9]*$/i

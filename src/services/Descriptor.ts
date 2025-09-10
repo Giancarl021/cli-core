@@ -1,12 +1,13 @@
 import { Chalk } from 'chalk';
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
+import type HelpDescriptor from '../interfaces/HelpDescriptor.js';
 import type {
     ArgDescriptor,
     CommandDescriptor,
     CommandGroupDescriptor,
-    FlagsDescriptor
+    FlagsDescriptor,
+    StdioDescriptor
 } from '../interfaces/HelpDescriptor.js';
-import HelpDescriptor from '../interfaces/HelpDescriptor.js';
 import { isEmpty as isObjectEmpty } from '../util/object.js';
 import { isEmpty as isStringEmpty } from '../util/string.js';
 
@@ -86,6 +87,30 @@ export default function Descriptor(options: DescriptorOptions) {
         return result.join(' ');
     }
 
+    function _renderStdio(stdio: StdioDescriptor): string {
+        const result: string[] = [];
+
+        if (stdio.stdin) {
+            result.push(
+                `    ${chalk.greenBright('stdin')}: ${chalk.white(stdio.stdin)}`
+            );
+        }
+
+        if (stdio.stdout) {
+            result.push(
+                `    ${chalk.greenBright('stdout')}: ${chalk.white(stdio.stdout)}`
+            );
+        }
+
+        if (stdio.stderr) {
+            result.push(
+                `    ${chalk.greenBright('stderr')}: ${chalk.white(stdio.stderr)}`
+            );
+        }
+
+        return result.join('\n');
+    }
+
     function _renderFlags(flags: FlagsDescriptor): string {
         if (!defaultPrefix) return '';
 
@@ -101,10 +126,10 @@ export default function Descriptor(options: DescriptorOptions) {
 
             if (isComplex) {
                 result.push(
-                    `  ${flagName}${flag.optional === false ? chalk.redBright(' (required)') : ''}: ${chalk.white(flag.description)}${(chalk.gray(flag.values && flag.values.length ? `\n      Values: ${flag.values.join(' | ')}` : ''))}`
+                    `    ${flagName}${flag.optional === false ? chalk.redBright(' (required)') : ''}: ${chalk.white(flag.description)}${chalk.gray(flag.values && flag.values.length ? `\n      Values: ${flag.values.join(' | ')}` : '')}`
                 );
             } else {
-                result.push(`  ${flagName}: ${chalk.gray(flag)}`);
+                result.push(`    ${flagName}: ${chalk.gray(flag)}`);
             }
         }
 
@@ -114,21 +139,19 @@ export default function Descriptor(options: DescriptorOptions) {
             return [name, ...aliases]
                 .map(getFullFlagName)
                 .filter(Boolean)
-                .join(' | ');
+                .join(chalk.magenta(' | '));
 
             function getFullFlagName(name: string): string | null {
-                const result = [];
+                let result: string | null;
 
                 if (!name.length) {
                     if (options.arguments.flags.ignoreEmptyFlags) return null;
-                    else result.push(defaultPrefix);
+                    else result = defaultPrefix ?? null;
                 } else {
-                    result.push(defaultPrefix + name);
+                    result = (defaultPrefix ?? '') + name;
                 }
 
-                return result
-                    .map(chalk.magentaBright)
-                    .join(chalk.magenta(' | '));
+                return chalk.magentaBright(result);
             }
         }
     }
@@ -163,7 +186,7 @@ export default function Descriptor(options: DescriptorOptions) {
         } else if ('subcommands' in currentDescriptor) {
             result += `\n${currentDescriptor.description ? chalk.white(`  Description: ${currentDescriptor.description}\n`) : ''}  ${chalk.white('Subcommands:')}\n${_renderSubcommands(currentDescriptor.subcommands)}`;
         } else {
-            result += `${currentDescriptor.args ? ' ' + _renderArguments(currentDescriptor.args) : ''}\n  ${chalk.white('Description:'  + currentDescriptor.description)}${currentDescriptor.flags ? chalk.white('\n  Flags:\n') + _renderFlags(currentDescriptor.flags) : ''}`;
+            result += `${currentDescriptor.args ? ' ' + _renderArguments(currentDescriptor.args) : ''}\n  ${chalk.white('Description:' + currentDescriptor.description)}${currentDescriptor.stdio ? chalk.white(`\n  STDIO:\n`) + _renderStdio(currentDescriptor.stdio) : ''}${currentDescriptor.flags ? chalk.white('\n  Flags:\n') + _renderFlags(currentDescriptor.flags) : ''}`;
         }
 
         return result;

@@ -1,4 +1,5 @@
 import { concat } from '../util/array.js';
+import constants from '../util/constants.js';
 
 import type Nullable from '../interfaces/Nullable.js';
 import type Undefinable from '../interfaces/Undefinable.js';
@@ -7,10 +8,15 @@ import type Arguments from '../interfaces/Arguments.js';
 import type Flags from '../interfaces/Flags.js';
 import type { Argument } from '../interfaces/Arguments.js';
 import type { Flag } from '../interfaces/Flags.js';
+import type { Stdio } from '../interfaces/CliCoreCommand.js';
 
 export type CommandHelpersInstance = ReturnType<typeof CommandHelpers>;
 
-export default function CommandHelpers(args: Arguments, flags: Flags) {
+export default function CommandHelpers(
+    args: Arguments,
+    flags: Flags,
+    stdio: Stdio
+) {
     function _flagsHas(string: string): boolean {
         return string in flags;
     }
@@ -82,6 +88,44 @@ export default function CommandHelpers(args: Arguments, flags: Flags) {
         return valueOrDefault(getArgAt(index), defaultValue);
     }
 
+    function noOutput(): typeof constants.noOutputSymbol {
+        return constants.noOutputSymbol;
+    }
+
+    function getStdin(): Stdio['stdin'] {
+        return stdio.stdin;
+    }
+
+    function getStdout(): Stdio['stdout'] {
+        return stdio.stdout;
+    }
+
+    function getStderr(): Stdio['stderr'] {
+        return stdio.stderr;
+    }
+
+    async function readJsonFromStdin<T = unknown>(): Promise<T> {
+        const chunks: Buffer[] = [];
+
+        for await (const chunk of stdio.stdin) {
+            chunks.push(Buffer.from(chunk, 'utf8'));
+        }
+
+        const jsonString = Buffer.concat(chunks).toString('utf-8');
+
+        return JSON.parse(jsonString) as T;
+    }
+
+    function writeJsonToStdout<T = unknown>(data: T): void {
+        const jsonString = JSON.stringify(data, null, 2);
+        stdio.stdout.write(jsonString + '\n');
+    }
+
+    function writeJsonToStderr<T = unknown>(data: T): void {
+        const jsonString = JSON.stringify(data, null, 2);
+        stdio.stderr.write(jsonString + '\n');
+    }
+
     return {
         whichFlag,
         hasFlag,
@@ -92,6 +136,13 @@ export default function CommandHelpers(args: Arguments, flags: Flags) {
         requireArgs,
         valueOrDefault,
         getFlagOrDefault,
-        getArgOrDefault
+        getArgOrDefault,
+        noOutput,
+        getStdin,
+        getStdout,
+        getStderr,
+        readJsonFromStdin,
+        writeJsonToStdout,
+        writeJsonToStderr
     };
 }
