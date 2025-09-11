@@ -68,13 +68,11 @@ export default function Descriptor(options: DescriptorOptions) {
             if (typeof arg === 'string') {
                 result.push(chalk.blueBright(`<${arg}>`));
             } else {
-                let temp = chalk.blueBright(arg.name);
+                let temp = chalk.blueBright('<' + arg.name + '>');
 
                 if (arg.multiple) {
                     temp += chalk.blue(`[, ${temp}[, ...]]`);
                 }
-
-                temp = chalk.blueBright('<') + temp + chalk.blueBright('>');
 
                 if (arg.optional) {
                     temp = chalk.cyan('[') + temp + chalk.cyan(']');
@@ -124,6 +122,8 @@ export default function Descriptor(options: DescriptorOptions) {
                 isComplex ? flag.aliases || [] : []
             );
 
+            if (!flagName) continue;
+
             if (isComplex) {
                 result.push(
                     `    ${flagName}${flag.optional === false ? chalk.redBright(' (required)') : ''}: ${chalk.white(flag.description)}${chalk.gray(flag.values && flag.values.length ? `\n      Values: ${flag.values.join(' | ')}` : '')}`
@@ -135,20 +135,24 @@ export default function Descriptor(options: DescriptorOptions) {
 
         return result.join('\n');
 
-        function getFullFlagNames(name: string, aliases: string[]): string {
-            return [name, ...aliases]
+        function getFullFlagNames(
+            name: string,
+            aliases: string[]
+        ): string | null {
+            const parts = [name, ...aliases]
                 .map(getFullFlagName)
-                .filter(Boolean)
-                .join(chalk.magenta(' | '));
+                .filter(Boolean);
+
+            return parts.length ? parts.join(chalk.magenta(' | ')) : null;
 
             function getFullFlagName(name: string): string | null {
                 let result: string | null;
 
                 if (!name.length) {
                     if (options.arguments.flags.ignoreEmptyFlags) return null;
-                    else result = defaultPrefix ?? null;
+                    else result = String(defaultPrefix);
                 } else {
-                    result = (defaultPrefix ?? '') + name;
+                    result = String(defaultPrefix) + name;
                 }
 
                 return chalk.magentaBright(result);
@@ -186,7 +190,21 @@ export default function Descriptor(options: DescriptorOptions) {
         } else if ('subcommands' in currentDescriptor) {
             result += `\n${currentDescriptor.description ? chalk.white(`  Description: ${currentDescriptor.description}\n`) : ''}  ${chalk.white('Subcommands:')}\n${_renderSubcommands(currentDescriptor.subcommands)}`;
         } else {
-            result += `${currentDescriptor.args ? ' ' + _renderArguments(currentDescriptor.args) : ''}\n  ${chalk.white('Description:' + currentDescriptor.description)}${currentDescriptor.stdio ? chalk.white(`\n  STDIO:\n`) + _renderStdio(currentDescriptor.stdio) : ''}${currentDescriptor.flags ? chalk.white('\n  Flags:\n') + _renderFlags(currentDescriptor.flags) : ''}`;
+            result += `${
+                currentDescriptor.args
+                    ? ' ' + _renderArguments(currentDescriptor.args)
+                    : ''
+            }\n  ${chalk.white('Description:' + currentDescriptor.description)}${
+                currentDescriptor.stdio
+                    ? chalk.white(`\n  STDIO:\n`) +
+                      _renderStdio(currentDescriptor.stdio)
+                    : ''
+            }${
+                currentDescriptor.flags
+                    ? chalk.white('\n  Flags:\n') +
+                      _renderFlags(currentDescriptor.flags)
+                    : ''
+            }`;
         }
 
         return result;

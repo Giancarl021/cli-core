@@ -51,6 +51,31 @@ export default function CliCore(options: PartialCliCoreOptions) {
     }
 
     /**
+     * Handles the result of a command based on the debug mode and noOutput options
+     * @param logger The logger instance to use for output
+     * @param result The result to handle
+     * @returns The result string if in debug mode and not noOutput, otherwise void
+     */
+    function _handleResult(
+        logger: LoggerInstance,
+        result: string | typeof constants.noOutputSymbol
+    ): void | string {
+        if (result === constants.noOutputSymbol) {
+            return;
+        }
+
+        if (_options.behavior.debugMode) {
+            // Reject output if exit code is set to non-zero
+            if (process.exitCode && process.exitCode !== 0) {
+                throw new Error(result);
+            }
+            return result;
+        }
+
+        logger.info(result);
+    }
+
+    /**
      * Runs a series of interceptors in sequence, passing the result of each
      * as the input of the next one
      * @param interceptors The interceptors to be run
@@ -74,7 +99,7 @@ export default function CliCore(options: PartialCliCoreOptions) {
      * executing it and handling the output
      * @returns A promise that resolves when the execution is complete
      */
-    async function run() {
+    async function run(): Promise<void | string> {
         const interceptors = bundler.getInterceptors();
 
         const rawArgs = await _runInterceptors(
@@ -113,7 +138,7 @@ export default function CliCore(options: PartialCliCoreOptions) {
                     stderr: process.stderr
                 };
 
-                const helpers = CommandHelpers(args, flags, stdio);
+                const helpers = CommandHelpers(navigation.commandArguments, flags, stdio);
                 const context: CliCoreCommandThis = {
                     stdio,
                     logger,
@@ -123,7 +148,11 @@ export default function CliCore(options: PartialCliCoreOptions) {
                     NO_OUTPUT: constants.noOutputSymbol
                 };
 
-                result = await navigation.result.call(context, args, flags);
+                result = await navigation.result.call(
+                    context,
+                    navigation.commandArguments,
+                    flags
+                );
             } catch (error) {
                 const _err =
                     error instanceof Error ? error : new Error(String(error));
@@ -135,11 +164,11 @@ export default function CliCore(options: PartialCliCoreOptions) {
 
         result = await _runInterceptors(interceptors.beforePrinting, result);
 
-        if (result !== constants.noOutputSymbol) {
-            logger.info(result);
-        }
+        const final = _handleResult(logger, result);
 
         await _runInterceptors(interceptors.beforeEnding, undefined);
+
+        return final;
     }
 
     return {
