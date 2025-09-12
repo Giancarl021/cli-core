@@ -1,319 +1,354 @@
 # cli-core
 
-![Logo](assets/icon.png)
-
-CLI wrapper to make easier to create tools
+CLI Toolkit for building command-line applications in Node.js.
+The library provides a flexible way to define commands, providing automatic parsing of arguments, flags, stdio handling and help generation. It also provides a rich extension system to extend the functionality of the final application.
 
 ## Installation
 
-You can install this package on [NPM](https://www.npmjs.com/package/@giancarl021/cli-core).
+npm:
+
+```bash
+# NPM
+npm install --save @giancarl021/cli-core
+# Yarn
+yarn add @giancarl021/cli-core
+# PNPM
+pnpm add @giancarl021/cli-core
+```
 
 ## Usage
 
-First import the library:
+```typescript
+// Import the library
+import CliCore, { defineCommand, type HelpDescriptor } from './index.js';
 
-```javascript
-const cliCore = require('@giancarl021/cli-core');
-```
+// Define some commands
+const commands = {
+    hello: defineCommand(() => 'Hello world!'),
+    echo: defineCommand(args => args.join(' ')),
+    complex: defineCommand(async function (args, flags) {
+        const data = await this.helpers.readJsonFromStdin();
 
-Then you can create the runner:
+        this.logger.json({ stdin: data, args, flags });
 
-```javascript
-const runner = cliCore(appName, options);
-```
+        return this.NO_OUTPUT;
+    })
+};
 
-The runner needs two parameters to be created:
-
-| Parameter | Description | Type | Required |
-| --------- | ----------- | ---- | -------- |
-| `appName` | The name of the application, will show in error and help messages | `string` | Yes |
-| `options` | The options of the application, will define the behavior of the application, like commands, flag parsing and command context | `object` | No |
-
-### App Name
-
-The `appName` string is the name of the application, the name called by the end user. Example:
-
-```javascript
-const appName = 'cli-core-example';
-```
-
-This should match with the application name:
-
-```bash
-cli-core-example arg1 arg2 --flag1 <value> --flag2
-```
-
-> Note: To call the application without the `node <file.js>` before the arguments and flags, you can use the [`bin` property](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#bin) in the `package.json`.
-
-### Options
-
-The `options` object contains all the properties needed to define the runner's behavior. The shape of the object is the following:
-
-```javascript
-const options = {
-    appDescription: null, // {string} The general description of the application, showed in the root help command if truthy
-        args: { // Settings for the arguments and flags parsed from the command line
-            origin: process.argv, // {string[]} The origin of the arguments, the default is the process arguments
-            flags: { // Settings for the flags parsed from the command line
-                flagPrefix: '--', // {string} The prefix for the flag
-                singleCharacterFlagPrefix: '-', // {string} The prefix for the single character flag
-                singleCharacterFlagOnlyUppercase: false, // {boolean} If the single character flag should only be parsed if the character is uppercase
-                tryTypeInference: true, // {boolean} Try to infer the type of the flag, default is true, example: '--flag true' will return the boolean true in the flags object if this option is enabled
-                parseFlags: true, // {boolean} If the runner should parse the flags, default is true
-                parseEmptyFlags: false, // {boolean} Allow empty flag names, default is false
-                helpFlags: ['help', '?'] // {string[]} Flags that will trigger the help command for the current command chain
+// Define the help descriptor
+const help: HelpDescriptor = {
+    hello: 'Prints Hello world!',
+    echo: {
+        description: 'Echoes the arguments passed',
+        args: ['arg1', { name: 'arg2', optional: true, multiple: true }]
+    },
+    complex: {
+        description:
+            'A complex command that reads JSON from stdin and prints it to stdout',
+        args: [{ name: 'args', multiple: true, optional: true }],
+        stdio: {
+            stdin: 'Any json input (required)'
+        },
+        flags: {
+            any: {
+                description: 'An example flag',
+                optional: true,
+                values: ['any value']
             }
-        },
-        behavior: { // Settings for the behavior of the runner
-            keepArgsStartingFromIndex: 2, // {number} The index of the arguments that should be ignored, default is 2, example: 'node app.js arg1 arg2' will return the arguments 'arg1' and 'arg2'
-            exitOnError: true, // {boolean} If the runner should call process.exit(1) on error, default is true
-            returnResult: false, // {boolean} If the runner should return the result of the command, otherwise it will print to the logger function, default is false
-            logger: async message => console.log(message) // {function} The logger function, default is console.log
-        },
-        context: {}, // {any} The context of the application, will be passed to the commands on the `this.context` variable, default is an empty object
-        extensions: [], // {object[]} The extensions of the application, will be built and passed to the commands on the `this.extensions` variable, default is an empty array
-        commands: {}, // {object} The commands of the application, the key is the command name, the value is the command object
-        help: {} // {object} The help descriptor object, the key is the command name, the value is the command descriptor object
+        }
+    }
+};
+
+// Create a new instance of the CLI Core
+const app = CliCore({
+    appName: 'my-app',
+    commands,
+    help
+});
+
+// Run the application
+app.run().catch(console.error);
+```
+
+This will create a command-line application with three commands: `hello`, `echo` and `complex`. The `hello` command will print `Hello world!`, the `echo` command will echo the arguments passed to it, and the `complex` command will read JSON from stdin and print it to stdout along with the arguments and flags passed.
+
+To see the help for the application, you can run any command or the application itself with the `--help` flag. This will show a detailed help message with the description of the commands, their arguments and flags.
+
+## Options
+
+There are multiple options that can be passed to the CLI Core instance:
+
+|               Option               |                            Type                            | Description                                                                                                                                                                                  |    Default value     |
+| :--------------------------------: | :--------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------: |
+|            `appName`\*             |                          `string`                          | The name of the application, the name called by the end user                                                                                                                                 |                      |
+|            `commands`\*            |    [`CliCoreCommand`](src/interfaces/CliCoreCommand.ts)    | The commands of the application, for more information refer to [Commands](#commands)                                                                                                         |                      |
+|          `appDescription`          |                      `string \| null`                      | The general description of the application, showed in the root help command if truthy                                                                                                        |        `null`        |
+|         `arguments.origin`         |                         `string[]`                         | The origin of the arguments, the default is the process arguments                                                                                                                            |    `process.argv`    |
+|      `arguments.ignoreFirst`       |                          `number`                          | The index of the arguments that should be ignored, default is `2`, to ignore the `node script.js ...`                                                                                        |         `2`          |
+|      `arguments.flags.parse`       |                         `boolean`                          | If the flags should be treated separately from the arguments, default is `true`                                                                                                              |        `true`        |
+|    `arguments.flags.inferTypes`    |                         `boolean`                          | Try to infer the type of the flag, default is `true`, example: `--flag true` will return the boolean `true` in the flags object if this option is enabled, but the string `"true"` otherwise |        `true`        |
+| `arguments.flags.ignoreEmptyFlags` |                         `boolean`                          | Ignore empty flag names, default is `false`.                                                                                                                                                 |       `false`        |
+|     `arguments.flags.prefixes`     |                         `string[]`                         | The prefixes for the flags.                                                                                                                                                                  |    `['-', '--']`     |
+|    `arguments.flags.helpFlags`     |                         `string[]`                         | Flags that will trigger the help command for the current command chain                                                                                                                       | `['h', 'help', '?']` |
+|        `behavior.debugMode`        |                         `boolean`                          | If the application is in `debug mode`, for more information refer to [Debug mode](#debug-mode)                                                                                               |       `false`        |
+|     `behavior.colorfulOutput`      |                         `boolean`                          | If the output should contain ASCII colors. When `false`, the output will be plain text.                                                                                                      |        `true`        |
+|               `help`               |    [`HelpDescriptor`](src/interfaces/HelpDescriptor.ts)    | The help descriptor object, for more information refer to [Help](#help)                                                                                                                      |         `{}`         |
+|            `extensions`            | [`CliCoreExtension[]`](src/interfaces/CliCoreExtension.ts) | A list of extensions to extend the functionality of the commands, for more information refer to [Extensions](#extensions)                                                                    |         `[]`         |
+
+> **\*** This option is required.
+
+## Commands
+
+The commands are the core of the application. Each command is a function that will be executed when the command is called.
+
+A command can be a `function` (synchronous or asynchronous) or an `object` containing multiple `functions` or another objects (nested commands).
+
+The routing of the commands is done by matching the arguments passed to the application with the command names.
+
+For example, let's say we have the following commands:
+
+```typescript
+const commands = {
+    hello: defineCommand(() => 'Hello world!'),
+    sub1: {
+        sub2: {
+            sub3: defineCommand(() => 'It is dark down here!')
+        }
+    }
 };
 ```
 
-### Commands
+To call the `hello` command, the user would run:
 
-The commands property is the main part of the application, it contains all the commands that the user would be able to call from the command-line. You can have nested commands, which will be routed according to the command chain used in the input.
+```bash
+my-app hello
+```
 
-Each command function will have a `this` object assigned to it with the following properties:
+And to call the `sub3` command, the user would run:
+
+```bash
+my-app sub1 sub2 sub3
+```
+
+The arguments passed to the command are the remaining arguments after the command names. So the `sub3` sub-command would not receive any arguments in this case, only after the routing is done: `my-app sub1 sub2 sub3 <arguments passed to the sub3 command>`.
+
+Each command function receives the following parameters:
 
 ```typescript
-interface CommandInternal {
-    appName: string; // The name of the application
-    context?: any; // The context of the application, completely defined and handled by the user
-    helpers: CommandHelpers; // A set of helper functions to be used by the command, like parsing flags with aliases, etc
-    extensions: BoundExtensions; // The extensions of the application, defined by the user and built by the runner
+function command(
+    args: string[],
+    flags: Record<string, boolean | string | number | null>
+) {
+    // ...
 }
 ```
 
-> **Important note:** As this package relies on `Function.prototype.bind` to assign the `this` object on each command, you should not use arrow functions if you want to access any property on the `this` object within the command function.
+The `args` parameter is an array of strings containing the arguments passed to the command.
 
-**Top-level command**
+The `flags` parameter is an object containing the flags passed to the command. The keys are the flag names (without the prefixes) and the values are the flag values. If a flag is passed without a value, it will be set to `null`. If a flag is not passed, it will not be present in the object.
 
-The shape of a top-level command is the following:
+Also, the command has a `this` context containing some useful services and constants:
 
-```javascript
-const commands = {
-    ['my-command']: function (args, flags) {
-            // Accessing the appName:
-            const appName = this.appName;
+```typescript
+function command() {
+    this.appName; // The name of the application
+    this.logger; // The logger service, allowing better logging to the console, even more in debug mode
+    this.stdio; // The stdio service, exposing the process stdin, stdout and stderr streams
+    this.extensions; // The extensions service, allowing to use the extensions added to the application
+    this.helpers.cloneArgs(); // Clone the arguments array
+    this.helpers.getArgAt(0); // Get a specific argument
+    this.helpers.getArgOrDefault('default', 0); // Get an argument or a default value
+    this.helpers.hasArgAt(0); // Check if an argument exists at a specific index
+    this.helpers.requireArgs('first', 'second'); // Require named arguments, throws if missing and returns an object with the values
 
-            // Accessing the context:
-            const appContext = this.context;
+    this.helpers.hasFlag('any', 'alias1', 'alias2'); // Check if a flag exists
+    this.helpers.getFlag('any', 'alias1', 'alias2'); // Get the value of a flag
+    this.helpers.getFlagOrDefault('default', 'any', 'alias1', 'alias2'); // Get a flag value or a default value
+    this.helpers.whichFlag('any', 'alias1', 'alias2'); // Get the actual flag name used
 
-            // Accessing extensions:
-            const extensionResult = this.extensions.myExtension.doSomething();
+    this.helpers.getStdin(); // Get the stdin stream
+    this.helpers.getStdout(); // Get the stdout stream
+    this.helpers.getStderr(); // Get the stderr stream
+    this.helpers.writeJsonToStdout({ test: true }); // Write JSON to stdout
+    this.helpers.writeJsonToStderr({ test: true }); // Write JSON to stderr
+    await this.helpers.readJsonFromStdin(); // Read JSON from stdin asynchronously (WARNING: will lock the process until EOF)
 
-            // Accessing flags using helpers:
-            const isFlagEnabled = this.helpers.hasFlag('flagName', 'alias1', 'alias2');
-            const flagValue = this.helpers.getFlag('flagName', 'alias1', 'alias2');
+    return this.NO_OUTPUT; // A special constant that can be returned to indicate that the command should not print anything to the console
+}
+```
 
-            // Accessing args using helpers:
-            const argValue = this.helpers.getArgAt(0);
-            const hasArgAtIndex1 = this.helpers.hasArgAt(1);
+The command must return a value, which will be printed to the console. If the command does not return anything, it will print `undefined`. To avoid this, the command can return the special symbol `this.NO_OUTPUT`, which indicates that the command should not print anything to the console.
 
-            // Accessing flags directly:
-            const thisFlag = flags.this || flags.T;
-            const isThatFlagTruthy = Boolean(flags.that || flags.TT);
+## Help
 
-            // Accessing args directly:
-            const [arg1, arg2, ...restArgs] = args;
+The help system is automatically generated based on the commands and the help descriptor object passed to the CLI Core instance.
 
-            // Return a string to the runner
-            return 'Hello world!';
+The help can be triggered by passing the `--help` flag (or any of the flags defined in the `arguments.flags.helpFlags` option) to any command or the application itself.
+
+> **Note:** The help will also be triggered if a command group (object with subcommands) is the last argument in the command chain. In conjunction with the help showing up, a error status code will be returned.
+
+The help descriptor is an object that describes the commands, their arguments and flags. The example below shows a help descriptor object:
+
+```typescript
+import {
+    defineMultiCommandHelpDescriptor,
+    defineSingleCommandHelpDescriptor
+} from './index';
+
+const singleCommandHelp = defineSingleCommandHelpDescriptor({
+    description: 'A simple greet command',
+    args: [
+        {
+            name: 'name',
+            multiple: false,
+            optional: false
         }
-};
-```
-
-The above command could be called from the command-line as:
-
-```bash
-<appName> my-command arg1 arg2 restArgs1 restArgs2 -T "someValue" --that true --flagName "anotherValue"
-```
-
-And the return value will always be `Hello world!`.
-
-**Nested command**
-
-Each nested command can have nested commands, and so on.
-The shape of a nested command is the following:
-
-```javascript
-const commands = {
-    ['my-command']: {
-        ['my-nested-operation']: {
-            ['my-deep-nested-operation']: function (arg, flags) {
-                /* Command code */
-                return 'Hello world from the deep!';
-            }
-        }
-    }
-};
-```
-
-The above command could be called from the command-line as:
-
-```bash
-<appName> my-command my-nested-operation my-deep-nested-operation <...args> <...flags>
-```
-
-And the return value will always be `Hello world from the deep!`.
-
-### Help Descriptor
-
-The help descriptor object is used to describe the commands defined on the application. The shape of the object is the following:
-
-```javascript
-const helpDescriptor = {
-    myCommand1: 'Command description',
-    myCommand2: {
-        description: 'Command description',
-        args: [
-            'arg1',
-            {
-                name: 'argument',
-                optional: false, // optional
-                multiple: false // optional
-            }
-        ],
-        flags: {
-            flag1: {
-                aliases: ['f', 'F', 'my-flag-the-first-one'], // optional
-                description: 'My first flag description',
-                values: ['any-value'], // optional
-                optional: true // optional
-            },
-            flag2: 'My second flag description'
+    ],
+    flags: {
+        excited: {
+            aliases: ['E'],
+            description: 'Whether to greet excitedly',
+            optional: true,
+            values: ['true', 'false']
         }
     },
-    myCommand3: {
-        description: 'Deep command description', // optional
+    stdio: {
+        stderr: 'Shown when an error occurs',
+        stdout: 'Shown when the command runs successfully',
+        stdin: 'Not used'
+    }
+});
+
+const multiCommandHelp = defineMultiCommandHelpDescriptor({
+    greet: 'Say hello',
+    farewell: {
+        description: 'Say goodbye'
+    },
+    math: {
+        description: 'Perform mathematical operations',
         subcommands: {
-            myCommand4: 'Command description'
+            add: {
+                description: 'Add numbers',
+                args: ['a', 'b'],
+                flags: {
+                    verbose: 'Whether to show detailed output'
+                }
+            }
         }
     }
-};
+});
 ```
 
-With the above help descriptor, the following output will be returned:
+As you can see, the help descriptor can be defined using two helper functions: `defineSingleCommandHelpDescriptor` and `defineMultiCommandHelpDescriptor`. The first one is used to define the help for a single command, while the second one is used to define the help for multiple commands.
 
-```bash
-<appName> myCommand1 --help
-<appName> myCommand1
-  Description: Command description
+> **Important:** The `defineSingleCommandHelpDescriptor` brands the object with a `$schema` property set to `#SingleCommandHelpDescriptor` to make it easily identifiable. If the object does not have this property, it will be treated as a `MultiCommandHelpDescriptor`, so be careful when manually creating the help descriptor object.
 
-<appName> myCommand2 --help
-<appName> myCommand2 <arg1> <argument>
-  Description: Command description
-  Flags:
-    --flag1 | -f | -F | --my-flag-the-first-one: My first flag description
-      Values: any-value
-    --flag2: My second flag description
+There are two JSON schema files available for the help descriptor objects:
 
-<appName> myCommand3 --help # In this case, the help will be returned if you call the command directly without any subcommand
-<appName> myCommand3
-  Description: Deep command description
-  Subcommands:
-    myCommand4: Command description
+- [Single-command applications](https://gist.githubusercontent.com/Giancarl021/127020c9cecb032beff587e308bec4ca/raw/6e7845f843c76cd46c7cc03a1a3dc44de889a01f/single-command-help-descriptor.schema.json)
+- [Multi-command applications](https://gist.githubusercontent.com/Giancarl021/127020c9cecb032beff587e308bec4ca/raw/6e7845f843c76cd46c7cc03a1a3dc44de889a01f/multi-command-help-descriptor.schema.json)
 
-<appName> myCommand3 myCommand4 --help
-<appName> myCommand3 myCommand4
-  Description: Command description
-```
+These can be used to validate the help descriptor object during development as a JSON file.
 
-### Runner
-
-The runner have the following methods:
-
-```javascript
-await runner.run(); // Execute the runner
-
-runner.command.get(commandName); // Get a command object with the name passed as parameter
-runner.command.set(commandName, commandObject); // Set a new command or overwrite an existing one
-runner.command.remove(commandName); // Remove a command with the name passed as parameter
-
-runner.help.get(); // Get the help descriptor object
-runner.help.set(helpDescriptorObject); // Set the help descriptor object
-```
+> **Important:** Remember to pass the imported JSON object to the `defineSingleCommandHelpDescriptor` or `defineMultiCommandHelpDescriptor` functions to brand it correctly.
 
 ## Extensions
 
-This package supports extensions, which can be used to extend the functionality of each command.
-The shape of an extension object is the following:
+The extension system allows to extend the functionality of the commands. An extension is an object that contains multiple methods that will be added to the command's `this.extensions` object. The extension can also intercept the cli-core pipeline steps using the interceptor hooks.
 
-Each command function will have a `this` object assigned to it with the following properties:
+To create an extension, you need to create an object that implements the `CliCoreExtension` interface:
 
 ```typescript
-interface PureCommandInternal {
-    appName: string; // The name of the application
-    context?: any; // The context of the application, completely defined and handled by the user
-    helpers: CommandHelpers; // A set of helper functions to be used by the extension, like parsing flags with aliases, etc. In the extension context, the context and helpers will be the same as in the command calling the extension callback
-}
-```
+import type { CliCoreExtension } from '@giancarl021/cli-core';
 
-> **Important note:** As this package relies on `Function.prototype.bind` to assign the `this` object on each extension callback, you should not use arrow functions if you want to access any property on the `this` object within the command function.
-
-```javascript
-const myExtension = {
-    name: 'myExtension',
-    builder() {
-        const state = {};
-
+const MyExtension: CliCoreExtension = {
+    name: 'myExtension', // The name of the extension, must be unique and contain only alphanumeric characters and underscores (not starting with a number)
+    buildCommandAddons(options) {
+        // Everything returned here will be available in the command's `this.extensions.myExtension`
         return {
-            myMethod(a, b) {
-                return a + b + this.helpers.valueOrDefault(this.context.number, 0) + this.helpers.valueOrDefault(state.number, 0);
-            },
+            myExtensionConst: 1e6,
+            myExtensionMethod() {
+                const flag = options.helpers.getFlagOrDefault(
+                    'default',
+                    'flag1',
+                    'alias1'
+                ); // All the helpers are available here
 
-            myAnotherMethod() {
-                state.number = this.helpers.valueOrDefault(state.number, 0) + 1;
-            },
-
-            joinArgs() {
-                return this.helpers.cloneArgs().join(' ');
+                return options.appName + ' is awesome!';
             }
+        };
+    },
+    interceptors: {
+        beforeParsing(options, rawArgs) {
+            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            rawArgs; // The raw arguments passed to the application, usually process.argv
+
+            // You can modify the options and rawArgs here if needed, or do a pre-loading step
+
+            return rawArgs;
+        },
+        beforeRouting(options, input) {
+            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            input; // The parsed arguments and flags
+
+            // You can modify the input here if needed, or do a pre-routing step
+            return input;
+        },
+        beforeRunning(options, route) {
+            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            route; // The resolved command route, containing the command callback, args and flags
+
+            // You can modify the route here if needed, or do a pre-execution step
+            // One example is to add dynamic commands, avoiding the need to declare them at startup
+
+            return route;
+        },
+        beforePrinting(options, output) {
+            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            output; // The output of the command, can be a string or the NO_OUTPUT symbol
+
+            // You can modify the output here if needed, or do a pre-printing step
+
+            return output;
+        },
+        beforeEnding(options) {
+            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+
+            // This is the last step before ending the process, you can do some cleanup here if needed.
         }
     }
 };
 ```
 
-To use the extension, you can call the extension callbacks from the command `this` object:
+### Interface augmentation in TypeScript
 
-```javascript
-const commands = {
-    ['my-command']: function (args, flags) {
-        return this.extensions.myExtension.joinArgs();
+To make TypeScript aware of the extension methods, you need to augment the `CliCoreCommandAddons` interface:
+
+```typescript
+declare module '@giancarl021/cli-core' {
+    interface CliCoreCommandAddons {
+        myExtension: {
+            myExtensionMethod(): void;
+            myExtensionConst: number;
+        }
     }
 }
 ```
 
-This combination should return the arguments joined by a space, for example:
+This will make TypeScript aware of the `myExtension` object in the command's `this.extensions` object.
 
-```bash
-<appName> my-command 1 2 3 4
-1 2 3 4
+## Debug Mode
 
-<appName> my-command a b c d
-a b c d
-```
+The debug mode can be enabled by setting the `behavior.debugMode` option to `true`. When enabled, the application will change some behaviors to make debugging easier:
 
-## Tests
+-   The logger will print `debug` level logs
+-   The logger will prefix each message with a timestamp and the log level
+-   The instance return the result of the command instead of printing it to the console
+-   Any error thrown will be propagated instead of being caught and printed to the console
+-   Any `process.exit` calls will be ignored
 
-If you want to test the library, you can run the tests by running the following commands on the root of the project:
+## Contributing
 
-npm:
-```bash
-npm install
-npm test
-```
+Contributions are welcome! Please open an issue or a pull request on GitHub.
 
-Yarn:
-```bash
-yarn
-yarn test
-```
+Currently the code is 100% covered by tests, so please make sure to add tests for any new functionality.

@@ -1,0 +1,3 @@
+pnpm run test:coverage
+pnpm run format
+git add .
