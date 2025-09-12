@@ -13,7 +13,16 @@ export type ExtensionBundlerOptions = Pick<
 
 export type ExtensionBundlerInstance = ReturnType<typeof ExtensionBundler>;
 
+/**
+ * Bundles extensions into command addons and collects flow interceptors.
+ * @param options The extension bundler options, including the application name and extensions
+ * @returns An object with `bundle` and `getInterceptors` methods
+ */
 export default function ExtensionBundler(options: ExtensionBundlerOptions) {
+    /**
+     * Collects flow interceptors from all extensions.
+     * @returns An object containing arrays of interceptors for each flow stage
+     */
     function getInterceptors(): FlowInterceptors {
         const interceptors: FlowInterceptors = {
             beforeParsing: [],
@@ -55,6 +64,11 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
         return interceptors;
     }
 
+    /**
+     * Bundles extensions into command addons.
+     * @param helpers The command helpers instance to pass to extensions
+     * @returns The bundled command addons from all extensions
+     */
     function bundle(helpers: CommandHelpersInstance): CliCoreCommandAddons {
         const commandAddons: CliCoreCommandAddons = {};
 
@@ -103,7 +117,16 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
     }
 
     return {
+        /**
+         * Bundles extensions into command addons.
+         * @param helpers The command helpers instance to pass to extensions
+         * @returns The bundled command addons from all extensions
+         */
         bundle,
+        /**
+         * Collects flow interceptors from all extensions.
+         * @returns An object containing arrays of interceptors for each flow stage
+         */
         getInterceptors
     };
 }

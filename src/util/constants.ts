@@ -14,7 +14,7 @@ const defaultOptions: CliCoreOptions = {
     appDescription: null,
     behavior: {
         debugMode: false,
-        colorfulOutput: false
+        colorfulOutput: true
     },
     help: {},
     commands: {},
@@ -43,5 +43,6 @@ export default {
          * A regular expression to validate extension names.
          */
         nameRegex: /^[_A-Z]+[_A-Z0-9]*$/i
-    }
+    },
+    singleCommandHelpDescriptorSchema: '#SingleCommandHelpDescriptor'
 } as const;

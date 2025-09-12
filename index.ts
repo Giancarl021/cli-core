@@ -16,6 +16,13 @@ import type {
     CliCoreCommandThis,
     Stdio
 } from './src/interfaces/CliCoreCommand.js';
+import type HelpDescriptor from './src/interfaces/HelpDescriptor.js';
+import type Arguments from './src/interfaces/Arguments.js';
+import type Flags from './src/interfaces/Flags.js';
+import type FlowInterceptors from './src/interfaces/FlowInterceptors.js';
+import type ParsedArguments from './src/interfaces/ParsedArguments.js';
+import type RoutingResult from './src/interfaces/RoutingResult.js';
+import type { CommandDescriptor } from './src/interfaces/HelpDescriptor.js';
 
 type CliCoreInstance = ReturnType<typeof CliCore>;
 
@@ -31,6 +38,8 @@ export default function CliCore(options: PartialCliCoreOptions) {
         constants.defaultOptions,
         true
     );
+
+    _options.commands = options.commands;
 
     const bundler = ExtensionBundler(_options);
     const parser = Parser(_options.arguments);
@@ -58,21 +67,26 @@ export default function CliCore(options: PartialCliCoreOptions) {
      */
     function _handleResult(
         logger: LoggerInstance,
-        result: string | typeof constants.noOutputSymbol
+        result: string | symbol
     ): void | string {
-        if (result === constants.noOutputSymbol) {
+        const _result =
+            result === constants.noOutputSymbol
+                ? constants.noOutputSymbol
+                : String(result);
+
+        if (_result === constants.noOutputSymbol) {
             return;
         }
 
         if (_options.behavior.debugMode) {
             // Reject output if exit code is set to non-zero
             if (process.exitCode && process.exitCode !== 0) {
-                throw new Error(result);
+                throw new Error(_result);
             }
-            return result;
+            return _result;
         }
 
-        logger.info(result);
+        logger.info(_result);
     }
 
     /**
@@ -126,7 +140,7 @@ export default function CliCore(options: PartialCliCoreOptions) {
             return;
         }
 
-        let result: string | typeof constants.noOutputSymbol;
+        let result: string | symbol;
 
         if (navigation.status === 'help') {
             result = descriptor.render(navigation.commandChain);
@@ -138,7 +152,11 @@ export default function CliCore(options: PartialCliCoreOptions) {
                     stderr: process.stderr
                 };
 
-                const helpers = CommandHelpers(navigation.commandArguments, flags, stdio);
+                const helpers = CommandHelpers(
+                    navigation.commandArguments,
+                    flags,
+                    stdio
+                );
                 const context: CliCoreCommandThis = {
                     stdio,
                     logger,
@@ -191,11 +209,44 @@ export function defineCommand(command: CliCoreCommand): CliCoreCommand {
     return command;
 }
 
+/**
+ * A helper function to make easier to define a CLI Core Help Descriptor
+ * for a single command application
+ * @param helpDescriptor The help descriptor for the command
+ * @returns The defined help descriptor
+ */
+export function defineSingleCommandHelpDescriptor(
+    helpDescriptor: CommandDescriptor
+): HelpDescriptor {
+    return {
+        ...helpDescriptor,
+        $schema: constants.singleCommandHelpDescriptorSchema
+    };
+}
+
+/**
+ * A helper function to make easier to define a CLI Core Help Descriptor
+ * for multiple commands and command groups
+ * @param helpDescriptor The help descriptor for the commands and command groups
+ * @returns The defined help descriptor
+ */
+export function defineMultiCommandHelpDescriptor(
+    helpDescriptor: Exclude<HelpDescriptor, CommandDescriptor>
+): HelpDescriptor {
+    return helpDescriptor;
+}
+
 export type {
     CliCoreOptions,
     CliCoreCommand,
     CliCoreInstance,
     CliCoreCommandAddons,
     CliCoreExtension,
-    PartialCliCoreOptions
+    PartialCliCoreOptions,
+    HelpDescriptor,
+    Arguments,
+    Flags,
+    FlowInterceptors,
+    ParsedArguments,
+    RoutingResult
 };

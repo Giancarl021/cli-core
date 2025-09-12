@@ -9,7 +9,9 @@ import {
 import index, {
     type PartialCliCoreOptions,
     type CliCoreInstance,
-    defineCommand
+    defineCommand,
+    defineMultiCommandHelpDescriptor,
+    defineSingleCommandHelpDescriptor
 } from '../../index.js';
 import type { MockInstance } from '../util/types.js';
 import constants from '../util/constants.js';
@@ -20,7 +22,9 @@ const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 const consoleErrorSpy = jest
     .spyOn(console, 'error')
     .mockImplementation(() => {});
-const processExitSpy = jest.spyOn(process, 'exit').mockImplementation((() => {}) as any);
+const processExitSpy = jest
+    .spyOn(process, 'exit')
+    .mockImplementation((() => {}) as any);
 
 beforeEach(() => {
     process.exitCode = undefined;
@@ -114,6 +118,19 @@ describe('[UNIT] index/run', () => {
         expect(cli).toMatchObject(expect.objectContaining(mockInstance));
 
         await expect(cli.run()).resolves.toBeUndefined();
+    });
+
+    test('Single command app run', async () => {
+        const options = structuredClone(defaultOptions);
+
+        options.arguments!.origin = [];
+        options.commands = defineCommand(() => 'Single command app');
+
+        const cli = index(options);
+
+        expect(cli).toMatchObject(expect.objectContaining(mockInstance));
+
+        await expect(cli.run()).resolves.toBe('Single command app');
     });
 
     test('Navigation error', async () => {
@@ -343,5 +360,82 @@ describe('[UNIT] index/defineCommand', () => {
         });
 
         expect(cmd).toBeInstanceOf(Function);
+    });
+});
+
+describe('[UNIT] index/defineSingleCommandHelpDescriptor', () => {
+    test('Define single command help descriptor must return the same object with $schema', () => {
+        expect(defineSingleCommandHelpDescriptor).toBeInstanceOf(Function);
+
+        const helpObject = {
+            description: 'Test command',
+            args: ['arg1', 'arg2'],
+            flags: {
+                test: {
+                    type: 'boolean',
+                    description: 'Test flag'
+                }
+            },
+            stdio: {
+                stdin: 'Reads from stdin',
+                stdout: 'Writes to stdout',
+                stderr: 'Writes to stderr'
+            }
+        };
+        const help = defineSingleCommandHelpDescriptor(helpObject);
+
+        expect(help).toMatchObject({
+            $schema: '#SingleCommandHelpDescriptor',
+            ...helpObject
+        });
+    });
+});
+
+describe('[UNIT] index/defineMultiCommandHelpDescriptor', () => {
+    test('Define multi command help descriptor must return the same object with $schema', () => {
+        expect(defineMultiCommandHelpDescriptor).toBeInstanceOf(Function);
+
+        const helpObject = {
+            command1: {
+                description: 'Test command 1',
+                args: ['arg1', 'arg2'],
+                flags: {
+                    test: {
+                        type: 'boolean',       
+                        description: 'Test flag'
+                    }
+                },
+                stdio: {
+                    stdin: 'Reads from stdin',
+                    stdout: 'Writes to stdout',
+                    stderr: 'Writes to stderr'
+                }
+            },
+            command2: {
+                description: 'Test command 2',
+                subcommands: {
+                    subcommand1: 'Just a string description',
+                    subcommand2: {
+                        description: 'Test subcommand 2',
+                        args: ['arg1'],
+                        flags: {
+                            test: {
+                                type: 'string',
+                                description: 'Test flag'
+                            }
+                        },
+                        stdio: {
+                            stdin: 'Reads from stdin',
+                            stdout: 'Writes to stdout',
+                            stderr: 'Writes to stderr'
+                        }
+                    }
+                }
+            }
+        };
+
+        const help = defineMultiCommandHelpDescriptor(helpObject);
+
+        expect(help).toMatchObject(helpObject);
     });
 });

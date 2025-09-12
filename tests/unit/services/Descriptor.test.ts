@@ -111,6 +111,41 @@ describe('[UNIT] services/Descriptor', () => {
         expect(output).toContain('[<file>]');
     });
 
+    test('Render single-command descriptor', () => {
+        const options = JSON.parse(JSON.stringify(baseOptions));
+        options.help = {
+            '$schema': '#SingleCommandHelpDescriptor',
+            description: 'Single command description',
+            args: ['input'],
+            flags: {
+                v: 'Version',
+                f: {
+                    description: 'Required flag',
+                    optional: false,
+                    aliases: ['force']
+                }
+            },
+            stdio: {
+                stdin: 'Standard input',
+                stdout: 'Standard output',
+                stderr: 'Standard error'
+            }
+        };
+        const descriptor = Descriptor(options);
+        expect(descriptor).toMatchObject(expect.objectContaining(mockInstance));
+        const output = descriptor.render([]);
+        expect(output).toContain(constants.appName);
+        expect(output).toContain('Single command description');
+        expect(output).toContain('<input>');
+        expect(output).toContain('Flags:');
+        expect(output).toContain('Version');
+        expect(output).toContain('Required flag');
+        expect(output).toContain('STDIO:');
+        expect(output).toContain('Standard input');
+        expect(output).toContain('Standard output');
+        expect(output).toContain('Standard error');
+    });
+
     test('Render subcommand with only description', () => {
         const options = JSON.parse(JSON.stringify(baseOptions));
         delete options.help.sub.args;

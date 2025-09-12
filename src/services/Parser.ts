@@ -11,11 +11,23 @@ export type ParserOptions = CliCoreOptions['arguments'];
 
 export type ParserInstance = ReturnType<typeof Parser>;
 
+/**
+ * Parses raw command-line arguments into structured arguments and flags.
+ * @param options The parser options, including flag prefixes and type inference settings
+ * @returns An object with a `parse` method to process raw arguments
+ */
 export default function Parser(options: ParserOptions) {
     const prefixes = options.flags.prefixes
         .filter(prefix => !isEmpty(prefix))
         .sort((a, b) => b.length - a.length);
 
+    /**
+     * Formats an argument based on the `inferTypes` option. If `inferTypes` is true,
+     * it attempts to infer the type of the argument (e.g., number, boolean, null).
+     * If `inferTypes` is false, it returns the argument as a string.
+     * @param argument The argument to format
+     * @returns The formatted argument, either as its inferred type or as a string
+     */
     const formatArgument = options.flags.inferTypes
         ? (argument: string) => {
               const inference = inferType(argument);
@@ -24,6 +36,11 @@ export default function Parser(options: ParserOptions) {
           }
         : (argument: string) => argument;
 
+    /**
+     * Matches a given argument against the defined flag prefixes.
+     * @param argument The argument to match
+     * @returns The flag name if a prefix matches, otherwise null
+     */
     function _matchFlag(argument: string): Nullable<string> {
         for (const prefix of prefixes) {
             if (argument.startsWith(prefix)) {
@@ -34,6 +51,11 @@ export default function Parser(options: ParserOptions) {
         return null;
     }
 
+    /**
+     * Parses raw command-line arguments into structured arguments and flags.
+     * @param rawArgs The raw command-line arguments to parse
+     * @returns An object containing the parsed arguments and flags
+     */
     function parse(rawArgs: string[]): ParsedArguments {
         if (!options.flags.parse || !prefixes.length) {
             return {
@@ -84,6 +106,11 @@ export default function Parser(options: ParserOptions) {
     }
 
     return {
+        /**
+         * Parses raw command-line arguments into structured arguments and flags.
+         * @param rawArgs The raw command-line arguments to parse
+         * @returns An object containing the parsed arguments and flags
+         */
         parse
     };
 }

@@ -3,7 +3,6 @@ import type { CliCoreCommandThis } from './CliCoreCommand.js';
 import type Awaitable from './Awaitable.js';
 import type RoutingResult from './RoutingResult.js';
 import type ParsedArguments from './ParsedArguments.js';
-import type constants from '../util/constants.js';
 
 /**
  * Represents the interceptors that can be used in a CLI Core extension.
@@ -55,8 +54,8 @@ export interface CliCoreExtensionInterceptors {
      */
     beforePrinting(
         options: CliCoreOptions,
-        output: string | typeof constants.noOutputSymbol
-    ): Awaitable<string | typeof constants.noOutputSymbol>;
+        output: string | symbol
+    ): Awaitable<string | symbol>;
     /**
      * Called before ending the CLI Core instance. This interceptor can be called
      * to do some cleanup before the CLI Core instance ends, such as closing files

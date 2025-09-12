@@ -1,3 +1,5 @@
+import type constants from '../util/constants.js';
+
 /**
  * A descriptor for a command argument
  */
@@ -104,12 +106,28 @@ export interface CommandGroupDescriptor {
             | string;
     };
 }
+
 /**
- * A descriptor for the entire application.
- * If follows this [JSON Schema](https://gist.githubusercontent.com/Giancarl021/127020c9cecb032beff587e308bec4ca/raw/2a64546e116eae6577c96464abffc485a06d735f/help-descriptor.schema.json)
+ * A descriptor for a single command application.
  */
-interface HelpDescriptor {
-    [commandName: string]: CommandGroupDescriptor | CommandDescriptor | string;
-}
+export type SingleCommandHelpDescriptor = CommandDescriptor & {
+    $schema: typeof constants.singleCommandHelpDescriptorSchema;
+};
+
+/**
+ * A help descriptor for a CLI Core application. Can be a single-command or multi-command application.
+ * There are two JSON schema files available for the help descriptor objects:
+ * 
+ * - [Single-command applications](https://gist.githubusercontent.com/Giancarl021/127020c9cecb032beff587e308bec4ca/raw/6e7845f843c76cd46c7cc03a1a3dc44de889a01f/single-command-help-descriptor.schema.json)
+ * - [Multi-command applications](https://gist.githubusercontent.com/Giancarl021/127020c9cecb032beff587e308bec4ca/raw/6e7845f843c76cd46c7cc03a1a3dc44de889a01f/multi-command-help-descriptor.schema.json)
+ */
+type HelpDescriptor =
+    | SingleCommandHelpDescriptor
+    | {
+          [commandName: string]:
+              | CommandGroupDescriptor
+              | CommandDescriptor
+              | string;
+      };
 
 export default HelpDescriptor;

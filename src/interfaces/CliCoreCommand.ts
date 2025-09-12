@@ -1,6 +1,5 @@
 import type { CommandHelpersInstance } from '../services/CommandHelpers.js';
 import type { LoggerInstance } from '../services/Logger.js';
-import type constants from '../util/constants.js';
 import type Arguments from './Arguments.js';
 import type Awaitable from './Awaitable.js';
 import type CliCoreCommandAddons from './CliCoreCommandAddons.js';
@@ -59,7 +58,7 @@ export interface CliCoreCommandThis {
      * perform actions without printing
      * anything to the console.
      */
-    readonly NO_OUTPUT: typeof constants.noOutputSymbol;
+    readonly NO_OUTPUT: symbol;
 }
 
 /**
@@ -73,7 +72,7 @@ export type CliCoreCommandCallback = (
     this: CliCoreCommandThis,
     args: Arguments,
     flags: Flags
-) => Awaitable<string | typeof constants.noOutputSymbol>;
+) => Awaitable<string | symbol>;
 
 /**
  * Represents a group of commands in a CLI application.

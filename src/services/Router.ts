@@ -102,6 +102,12 @@ export default function Router(options: RouterOptions) {
     }
 
     return {
+        /**
+         * Navigates through the command structure based on provided arguments and flags.
+         * @param args The command-line arguments to process
+         * @param flags The parsed flags from the command line
+         * @returns The result of the routing process, including status, command chain, and any relevant data
+         */
         navigate
     };
 }
