@@ -1,4 +1,4 @@
-import { Chalk } from 'chalk';
+import globalChalk, { Chalk } from 'chalk';
 import { isEmpty as isObjectEmpty } from '../util/object.js';
 import { isEmpty as isStringEmpty } from '../util/string.js';
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
@@ -13,6 +13,7 @@ import type {
 } from '../interfaces/HelpDescriptor.js';
 import type AnyRecord from '../interfaces/AnyRecord.js';
 import constants from '../util/constants.js';
+import chalk from 'chalk';
 
 export type DescriptorOptions = Pick<
     CliCoreOptions,
@@ -28,7 +29,11 @@ export type DescriptorInstance = ReturnType<typeof Descriptor>;
  */
 export default function Descriptor(options: DescriptorOptions) {
     const chalk = new Chalk({
-        level: options.behavior.colorfulOutput ? undefined : 0
+        level: options.behavior.colorfulOutput
+            ? globalChalk.level > 0
+                ? globalChalk.level
+                : 1
+            : 0
     });
 
     /**
