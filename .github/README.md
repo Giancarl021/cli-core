@@ -328,7 +328,7 @@ To make TypeScript aware of the extension methods, you need to augment the `CliC
 declare module '@giancarl021/cli-core' {
     interface CliCoreCommandAddons {
         myExtension: {
-            myExtensionMethod(): void;
+            myExtensionMethod(): string;
             myExtensionConst: number;
         }
     }
