@@ -68,7 +68,7 @@ describe('[UNIT] index/run', () => {
 
         expect(cli).toMatchObject(expect.objectContaining(mockInstance));
 
-        await expect(cli.run()).rejects.toThrowError(
+        await expect(cli.run()).rejects.toThrow(
             'No help found for command ' + constants.appName
         );
     });
@@ -85,7 +85,7 @@ describe('[UNIT] index/run', () => {
 
         expect(cli).toMatchObject(expect.objectContaining(mockInstance));
 
-        await expect(cli.run()).rejects.toThrowError('Test error');
+        await expect(cli.run()).rejects.toThrow('Test error');
     });
 
     test('Successful run', async () => {
@@ -142,7 +142,7 @@ describe('[UNIT] index/run', () => {
 
         expect(cli).toMatchObject(expect.objectContaining(mockInstance));
 
-        await expect(cli.run()).rejects.toThrowError(
+        await expect(cli.run()).rejects.toThrow(
             'Command "nonexistent" not found'
         );
     });
@@ -159,7 +159,7 @@ describe('[UNIT] index/run', () => {
 
         expect(cli).toMatchObject(expect.objectContaining(mockInstance));
 
-        await expect(cli.run()).rejects.toThrowError('This is a string error');
+        await expect(cli.run()).rejects.toThrow('This is a string error');
     });
 
     test('Run with interceptors', async () => {
