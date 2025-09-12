@@ -1,10 +1,14 @@
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect, afterEach } from '@jest/globals';
 import Descriptor, {
     type DescriptorOptions,
     type DescriptorInstance
 } from '../../../src/services/Descriptor.js';
 import type { MockInstance } from '../../util/types.js';
 import constants from '../../util/constants.js';
+
+afterEach(() => {
+    if (process.env.FORCE_COLOR) delete process.env.FORCE_COLOR;
+});
 
 const mockInstance: MockInstance<DescriptorInstance> = {
     render: expect.any(Function)
@@ -114,7 +118,7 @@ describe('[UNIT] services/Descriptor', () => {
     test('Render single-command descriptor', () => {
         const options = JSON.parse(JSON.stringify(baseOptions));
         options.help = {
-            '$schema': '#SingleCommandHelpDescriptor',
+            $schema: '#SingleCommandHelpDescriptor',
             description: 'Single command description',
             args: ['input'],
             flags: {
@@ -387,6 +391,7 @@ describe('[UNIT] services/Descriptor', () => {
     });
 
     test('Render with colorful output', () => {
+        process.env.FORCE_COLOR = '3';
         const options = JSON.parse(JSON.stringify(baseOptions));
         options.behavior.colorfulOutput = true;
         const descriptor = Descriptor(options);
