@@ -3,7 +3,20 @@
 CLI Toolkit for building command-line applications in Node.js.
 The library provides a flexible way to define commands, providing automatic parsing of arguments, flags, stdio handling and help generation. It also provides a rich extension system to extend the functionality of the final application.
 
+## Summary
+
+-   [Installation](#installation)
+-   [Usage](#usage)
+-   [Options](#options)
+-   [Commands](#commands)
+-   [Help](#help)
+-   [Extensions](#extensions)
+-   [Debug Mode](#debug-mode)
+-   [Contributing](#contributing)
+
 ## Installation
+
+Go back to [Summary](#summary)
 
 npm:
 
@@ -17,6 +30,8 @@ pnpm add @giancarl021/cli-core
 ```
 
 ## Usage
+
+Go back to [Summary](#summary)
 
 ```typescript
 // Import the library
@@ -76,6 +91,8 @@ To see the help for the application, you can run any command or the application 
 
 ## Options
 
+Go back to [Summary](#summary)
+
 There are multiple options that can be passed to the CLI Core instance:
 
 |               Option               |                            Type                            | Description                                                                                                                                                                                  |    Default value     |
@@ -98,6 +115,8 @@ There are multiple options that can be passed to the CLI Core instance:
 > **\*** This option is required.
 
 ## Commands
+
+Go back to [Summary](#summary)
 
 The commands are the core of the application. Each command is a function that will be executed when the command is called.
 
@@ -181,6 +200,8 @@ The command must return a value, which will be printed to the console. If the co
 
 ## Help
 
+Go back to [Summary](#summary)
+
 The help system is automatically generated based on the commands and the help descriptor object passed to the CLI Core instance.
 
 The help can be triggered by passing the `--help` flag (or any of the flags defined in the `arguments.flags.helpFlags` option) to any command or the application itself.
@@ -253,6 +274,8 @@ These can be used to validate the help descriptor object during development as a
 > **Important:** Remember to pass the imported JSON object to the `defineSingleCommandHelpDescriptor` or `defineMultiCommandHelpDescriptor` functions to brand it correctly.
 
 ## Extensions
+
+Go back to [Summary](#summary)
 
 The extension system allows to extend the functionality of the commands. An extension is an object that contains multiple methods that will be added to the command's `this.extensions` object. The extension can also intercept the cli-core pipeline steps using the interceptor hooks.
 
@@ -339,6 +362,8 @@ This will make TypeScript aware of the `myExtension` object in the command's `th
 
 ## Debug Mode
 
+Go back to [Summary](#summary)
+
 The debug mode can be enabled by setting the `behavior.debugMode` option to `true`. When enabled, the application will change some behaviors to make debugging easier:
 
 -   The logger will print `debug` level logs
@@ -348,6 +373,8 @@ The debug mode can be enabled by setting the `behavior.debugMode` option to `tru
 -   Any `process.exit` calls will be ignored
 
 ## Contributing
+
+Go back to [Summary](#summary)
 
 Contributions are welcome! Please open an issue or a pull request on GitHub.
 
