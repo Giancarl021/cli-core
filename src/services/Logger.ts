@@ -1,4 +1,4 @@
-import globalChalk, { Chalk } from 'chalk';
+import { Chalk } from 'chalk';
 import { colorize } from 'json-colorizer';
 
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
@@ -21,11 +21,12 @@ export function LoggerFactory(options: LoggerOptions) {
  */
 export default function Logger(options: LoggerOptions, origin: string) {
     const chalk = new Chalk({
-        level: options.behavior.colorfulOutput
-            ? globalChalk.level > 0
-                ? globalChalk.level
-                : 1
-            : 0
+        level:
+            typeof options.behavior.colorfulOutput === 'number'
+                ? options.behavior.colorfulOutput
+                : options.behavior.colorfulOutput
+                  ? undefined
+                  : 0
     });
 
     /**

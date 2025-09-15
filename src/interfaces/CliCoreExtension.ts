@@ -3,6 +3,7 @@ import type { CliCoreCommandThis } from './CliCoreCommand.js';
 import type Awaitable from './Awaitable.js';
 import type RoutingResult from './RoutingResult.js';
 import type ParsedArguments from './ParsedArguments.js';
+import type CliCoreCommandAddons from './CliCoreCommandAddons.js';
 
 /**
  * Represents the interceptors that can be used in a CLI Core extension.
@@ -88,7 +89,7 @@ interface CliCoreExtension {
      * by augmenting it.
      */
     buildCommandAddons?: (
-        options: Pick<CliCoreCommandThis, 'appName' | 'helpers'>
+        options: Pick<CliCoreCommandThis, 'appName' | 'helpers'> & { addons: CliCoreCommandAddons }
     ) => Record<string, unknown>;
     /**
      * The interceptors used by the extension. They are called at different
