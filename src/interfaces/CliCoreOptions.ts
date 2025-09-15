@@ -3,6 +3,7 @@ import type CliCoreCommand from './CliCoreCommand.js';
 import type CliCoreExtension from './CliCoreExtension.js';
 import type DeepPartial from './DeepPartial.js';
 import type Nullable from './Nullable.js';
+import type chalk from 'chalk';
 
 /**
  * The options used to create a CLI Core instance
@@ -79,9 +80,10 @@ interface CliCoreOptions {
          */
         debugMode: boolean;
         /**
-         * Whether to enable colorful output using `chalk`, by default it's `true`
+         * Whether to enable colorful output using `chalk`, by default it's `true`.
+         * It can also be set to a specific `chalk.level` to force a specific color level
          */
-        colorfulOutput: boolean;
+        colorfulOutput: boolean | typeof chalk.level;
     };
     /**
      * The extensions to be used by the application, for more information

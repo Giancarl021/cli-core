@@ -216,12 +216,16 @@ describe('[UNIT] services/Descriptor', () => {
     test('Render complex arguments', () => {
         const options = JSON.parse(JSON.stringify(baseOptions));
         options.help.main.args = [
-            { name: 'complex', multiple: true, optional: true }
+            { name: 'c1', multiple: true, optional: false },
+            { name: 'c2', multiple: false, optional: true },
+            { name: 'c3', multiple: true, optional: true }
         ];
         const descriptor = Descriptor(options);
         expect(descriptor).toMatchObject(expect.objectContaining(mockInstance));
         const output = descriptor.render(['main']);
-        expect(output).toContain('[<complex>[, <complex>[, ...]]]');
+        expect(output).toContain('<c1>[, <c1>[, ...]]');
+        expect(output).toContain('[<c2>]');
+        expect(output).toContain('[<c3>[, <c3>[, ...]]]');
     });
 
     test('Render complex flags', () => {
@@ -386,9 +390,9 @@ describe('[UNIT] services/Descriptor', () => {
         expect(output).not.toContain('f2');
     });
 
-    test('Render with colorful output', () => {
+    test('Render with forced colorful output', () => {
         const options = JSON.parse(JSON.stringify(baseOptions));
-        options.behavior.colorfulOutput = true;
+        options.behavior.colorfulOutput = 1;
         const descriptor = Descriptor(options);
         expect(descriptor).toMatchObject(expect.objectContaining(mockInstance));
         const output = descriptor.render(['main']);
@@ -404,5 +408,23 @@ describe('[UNIT] services/Descriptor', () => {
         expect(output).toContain('Standard error');
         // Should contain ANSI color codes
         expect(output).toMatch(/\x1B\[\d+m/);
+    });
+
+    test('Render with automatic colorful output', () => {
+        const options = JSON.parse(JSON.stringify(baseOptions));
+        options.behavior.colorfulOutput = true;
+        const descriptor = Descriptor(options);
+        expect(descriptor).toMatchObject(expect.objectContaining(mockInstance));
+        const output = descriptor.render(['main']);
+        expect(output).toContain('main');
+        expect(output).toContain('Main command');
+        expect(output).toContain('<input>');
+        expect(output).toContain('Flags:');
+        expect(output).toContain('Version');
+        expect(output).toContain('Required flag');
+        expect(output).toContain('STDIO:');
+        expect(output).toContain('Standard input');
+        expect(output).toContain('Standard output');
+        expect(output).toContain('Standard error');
     });
 });

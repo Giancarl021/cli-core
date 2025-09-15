@@ -88,7 +88,8 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
             const extensionBundle = extension.buildCommandAddons
                 ? extension.buildCommandAddons({
                       appName: options.appName,
-                      helpers
+                      helpers,
+                      addons: commandAddons
                   })
                 : {};
 

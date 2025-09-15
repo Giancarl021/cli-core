@@ -1,9 +1,10 @@
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect, jest } from '@jest/globals';
 import ExtensionBundler from '../../../src/services/ExtensionBundler.js';
 import constants from '../../util/constants.js';
 
 import type { CommandHelpersInstance } from '../../../src/services/CommandHelpers.js';
 import type { MockService } from '../../util/types.js';
+import CliCoreExtension from '../../../src/interfaces/CliCoreExtension.js';
 
 const mockInstance: MockService<typeof ExtensionBundler> = {
     bundle: expect.any(Function),
@@ -166,6 +167,132 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(interceptors.beforeEnding[0]).toEqual(
             constants.extensions.b?.interceptors?.beforeEnding
         );
+    });
+
+    test('Multiple interceptors', () => {
+        const ext1 = {
+            name: 'ext1',
+            interceptors: {
+                beforeParsing: jest.fn()
+            }
+        } as CliCoreExtension;
+        const ext2 = {
+            name: 'ext2',
+            interceptors: {
+                beforeRunning: jest.fn()
+            }
+        } as CliCoreExtension;
+        const ext3 = {
+            name: 'ext3',
+            interceptors: {
+                beforePrinting: jest.fn()
+            }
+        } as CliCoreExtension;
+        const bundler = ExtensionBundler({
+            appName: constants.appName,
+            extensions: [ext1, ext2, ext3]
+        });
+        const interceptors = bundler.getInterceptors();
+        expect(interceptors.beforeParsing).toEqual([
+            ext1.interceptors!.beforeParsing
+        ]);
+        expect(interceptors.beforeRunning).toEqual([
+            ext2.interceptors!.beforeRunning
+        ]);
+        expect(interceptors.beforePrinting).toEqual([
+            ext3.interceptors!.beforePrinting
+        ]);
+        expect(interceptors.beforeRouting).toEqual([]);
+        expect(interceptors.beforeEnding).toEqual([]);
+    });
+
+    test('Accessing previous mounted extension context during build', () => {
+        const ext1 = {
+            name: 'EXT1',
+            buildCommandAddons: jest.fn(
+                ({ appName, helpers, addons }) => {
+                    expect(appName).toBe(constants.appName);
+                    expect(helpers).toBe(mockHelpers);
+                    expect(addons).toEqual({});
+                    return { value1: 'value1' };
+                }
+            )
+        } as CliCoreExtension;
+
+        const ext2 = {
+            name: 'EXT2',
+            buildCommandAddons: jest.fn(
+                ({ appName, helpers, addons }) => {
+                    expect(appName).toBe(constants.appName);
+                    expect(helpers).toBe(mockHelpers);
+                    expect(addons).toEqual({
+                        EXT1: { value1: 'value1' }
+                    });
+                    return { value2: 'value2' };
+                }
+            )
+        } as CliCoreExtension;
+
+        const bundler = ExtensionBundler({
+            appName: constants.appName,
+            extensions: [ext1, ext2]
+        });
+
+        expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
+
+        const bundle = bundler.bundle(mockHelpers);
+
+        expect(bundle).toEqual({
+            EXT1: { value1: 'value1' },
+            EXT2: { value2: 'value2' }
+        });
+
+        expect(ext1.buildCommandAddons).toHaveBeenCalledTimes(1);
+        expect(ext2.buildCommandAddons).toHaveBeenCalledTimes(1);
+    });
+
+    test('Accessing later mounted extension context at runtime', () => {
+        const ext1 = {
+            name: 'EXT1',
+            buildCommandAddons: jest.fn(({ appName, helpers, addons }) => {
+                return {
+                    getExt2Value: () => {
+                        // This function is called at runtime, so EXT2 should be available
+                        return addons.EXT2.value2;
+                    },
+                    addons
+                };
+            })
+        } as CliCoreExtension;
+
+        const ext2 = {
+            name: 'EXT2',
+            buildCommandAddons: jest.fn(() => {
+                return { value2: 'value2' };
+            })
+        } as CliCoreExtension;
+
+        const bundler = ExtensionBundler({
+            appName: constants.appName,
+            extensions: [ext1, ext2]
+        });
+
+        expect(bundler).toMatchObject(expect.objectContaining(mockInstance));
+
+        const bundle = bundler.bundle(mockHelpers);
+
+        expect(bundle).toEqual({
+            EXT1: {
+                getExt2Value: expect.any(Function),
+                addons: expect.any(Object)
+            },
+            EXT2: { value2: 'value2' }
+        });
+
+        expect((bundle as any).EXT1.getExt2Value()).toBe('value2');
+
+        expect(ext1.buildCommandAddons).toHaveBeenCalledTimes(1);
+        expect(ext2.buildCommandAddons).toHaveBeenCalledTimes(1);
     });
 
     test('Colliding extensions', () => {
