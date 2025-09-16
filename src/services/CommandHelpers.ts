@@ -192,7 +192,7 @@ export default function CommandHelpers(
 
     /**
      * Reads JSON data from the standard input stream.
-     * 
+     *
      * **Important:** Will block execution until the input stream is closed (e.g., EOF).
      * @returns A promise that resolves to the parsed JSON data
      */
@@ -314,7 +314,7 @@ export default function CommandHelpers(
         getStderr,
         /**
          * Reads JSON data from the standard input stream.
-         * 
+         *
          * **Important:** Will block execution until the input stream is closed (e.g., EOF).
          * @returns A promise that resolves to the parsed JSON data
          */

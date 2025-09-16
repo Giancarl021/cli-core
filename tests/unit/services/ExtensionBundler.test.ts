@@ -209,28 +209,24 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Accessing previous mounted extension context during build', () => {
         const ext1 = {
             name: 'EXT1',
-            buildCommandAddons: jest.fn(
-                ({ appName, helpers, addons }) => {
-                    expect(appName).toBe(constants.appName);
-                    expect(helpers).toBe(mockHelpers);
-                    expect(addons).toEqual({});
-                    return { value1: 'value1' };
-                }
-            )
+            buildCommandAddons: jest.fn(({ appName, helpers, addons }) => {
+                expect(appName).toBe(constants.appName);
+                expect(helpers).toBe(mockHelpers);
+                expect(addons).toEqual({});
+                return { value1: 'value1' };
+            })
         } as CliCoreExtension;
 
         const ext2 = {
             name: 'EXT2',
-            buildCommandAddons: jest.fn(
-                ({ appName, helpers, addons }) => {
-                    expect(appName).toBe(constants.appName);
-                    expect(helpers).toBe(mockHelpers);
-                    expect(addons).toEqual({
-                        EXT1: { value1: 'value1' }
-                    });
-                    return { value2: 'value2' };
-                }
-            )
+            buildCommandAddons: jest.fn(({ appName, helpers, addons }) => {
+                expect(appName).toBe(constants.appName);
+                expect(helpers).toBe(mockHelpers);
+                expect(addons).toEqual({
+                    EXT1: { value1: 'value1' }
+                });
+                return { value2: 'value2' };
+            })
         } as CliCoreExtension;
 
         const bundler = ExtensionBundler({

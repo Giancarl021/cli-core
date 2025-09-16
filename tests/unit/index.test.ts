@@ -416,7 +416,7 @@ describe('[UNIT] index/defineMultiCommandHelpDescriptor', () => {
                 args: ['arg1', 'arg2'],
                 flags: {
                     test: {
-                        type: 'boolean',       
+                        type: 'boolean',
                         description: 'Test flag'
                     }
                 },

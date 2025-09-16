@@ -89,7 +89,9 @@ interface CliCoreExtension {
      * by augmenting it.
      */
     buildCommandAddons?: (
-        options: Pick<CliCoreCommandThis, 'appName' | 'helpers'> & { addons: CliCoreCommandAddons }
+        options: Pick<CliCoreCommandThis, 'appName' | 'helpers'> & {
+            addons: CliCoreCommandAddons;
+        }
     ) => Record<string, unknown>;
     /**
      * The interceptors used by the extension. They are called at different

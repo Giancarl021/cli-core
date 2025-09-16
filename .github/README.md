@@ -5,14 +5,14 @@ The library provides a flexible way to define commands, providing automatic pars
 
 ## Summary
 
--   [Installation](#installation)
--   [Usage](#usage)
--   [Options](#options)
--   [Commands](#commands)
--   [Help](#help)
--   [Extensions](#extensions)
--   [Debug Mode](#debug-mode)
--   [Contributing](#contributing)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Options](#options)
+- [Commands](#commands)
+- [Help](#help)
+- [Extensions](#extensions)
+- [Debug Mode](#debug-mode)
+- [Contributing](#contributing)
 
 ## Installation
 
@@ -353,7 +353,7 @@ declare module '@giancarl021/cli-core' {
         myExtension: {
             myExtensionMethod(): string;
             myExtensionConst: number;
-        }
+        };
     }
 }
 ```
@@ -366,11 +366,11 @@ Go back to [Summary](#summary)
 
 The debug mode can be enabled by setting the `behavior.debugMode` option to `true`. When enabled, the application will change some behaviors to make debugging easier:
 
--   The logger will print `debug` level logs
--   The logger will prefix each message with a timestamp and the log level
--   The instance return the result of the command instead of printing it to the console
--   Any error thrown will be propagated instead of being caught and printed to the console
--   Any `process.exit` calls will be ignored
+- The logger will print `debug` level logs
+- The logger will prefix each message with a timestamp and the log level
+- The instance return the result of the command instead of printing it to the console
+- Any error thrown will be propagated instead of being caught and printed to the console
+- Any `process.exit` calls will be ignored
 
 ## Contributing
 
