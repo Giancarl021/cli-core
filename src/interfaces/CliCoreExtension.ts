@@ -4,6 +4,15 @@ import type Awaitable from './Awaitable.js';
 import type RoutingResult from './RoutingResult.js';
 import type ParsedArguments from './ParsedArguments.js';
 import type CliCoreCommandAddons from './CliCoreCommandAddons.js';
+import type { LoggerInstance } from '../services/Logger.js';
+
+/**
+ * The options passed to each interceptor, combining the full
+ * CLI Core options with a logger instance.
+ */
+export type InterceptorOptions = CliCoreOptions & {
+    logger: LoggerInstance;
+};
 
 /**
  * Represents the interceptors that can be used in a CLI Core extension.
@@ -13,59 +22,59 @@ export interface CliCoreExtensionInterceptors {
     /**
      * Called before the arguments are parsed. This interceptor can
      * be called to change the arguments before they are parsed.
-     * @param options The CLI Core options passed by the user
+     * @param options The CLI Core options passed by the user alongside a logger instance
      * @param rawArgs The raw arguments passed to the application, before parsing
      * to arguments and flags
      * @returns A list of raw args to be used in the parsing
      */
     beforeParsing(
-        options: CliCoreOptions,
+        options: InterceptorOptions,
         rawArgs: string[]
     ): Awaitable<string[]>;
     /**
      * Called before the routing of the command. This interceptor can
      * be called to change the arguments and flags before the routing
      * to a specific command.
-     * @param options The CLI Core options passed by the user
+     * @param options The CLI Core options passed by the user alongside a logger instance
      * @param input The arguments and flags that before the routing
      * @returns The arguments and flags to be used in the routing
      */
     beforeRouting(
-        options: CliCoreOptions,
+        options: InterceptorOptions,
         input: ParsedArguments
     ): Awaitable<ParsedArguments>;
     /**
      * Called before running the command. This interceptor can be called
      * to change the routing result before running the command, such as
      * changing the command to be run.
-     * @param options The CLI Core options passed by the user
+     * @param options The CLI Core options passed by the user alongside a logger instance
      * @param route The routing result before running
      * @returns The routing result to be used in the running
      */
     beforeRunning(
-        options: CliCoreOptions,
+        options: InterceptorOptions,
         route: RoutingResult
     ): Awaitable<RoutingResult>;
     /**
      * Called before printing the command output. This interceptor can be called
      * to change the output of the command before it's printed to the terminal.
-     * @param options The CLI Core options passed by the user
+     * @param options The CLI Core options passed by the user alongside a logger instance
      * @param output The output of the command before printing
      * @returns The output to be used in the printing
      */
     beforePrinting(
-        options: CliCoreOptions,
+        options: InterceptorOptions,
         output: string | symbol
     ): Awaitable<string | symbol>;
     /**
      * Called before ending the CLI Core instance. This interceptor can be called
      * to do some cleanup before the CLI Core instance ends, such as closing files
      * or connections.
-     * @param options The CLI Core options passed by the user
+     * @param options The CLI Core options passed by the user alongside a logger instance
      * @returns A `Promise<void>` that resolves when the cleanup is done or `void`
      * if the interceptor is synchronous
      */
-    beforeEnding(options: CliCoreOptions): Awaitable;
+    beforeEnding(options: InterceptorOptions): Awaitable;
 }
 
 /**
@@ -91,6 +100,7 @@ interface CliCoreExtension {
     buildCommandAddons?: (
         options: Pick<CliCoreCommandThis, 'appName' | 'helpers'> & {
             addons: CliCoreCommandAddons;
+            logger: LoggerInstance;
         }
     ) => Record<string, unknown>;
     /**

@@ -8,7 +8,10 @@ type FlowInterceptors = {
     /**
      * The interceptors that can be used in the CLI Core.
      */
-    [K in keyof CliCoreExtensionInterceptors]: CliCoreExtensionInterceptors[K][];
+    [K in keyof CliCoreExtensionInterceptors]: {
+        callback: CliCoreExtensionInterceptors[K];
+        extensionName: string;
+    }[];
 };
 
 export default FlowInterceptors;

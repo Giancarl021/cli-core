@@ -17,6 +17,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('No extensions', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: []
         });
 
@@ -45,6 +50,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Single extension with only command addons', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [constants.extensions.a]
         });
 
@@ -78,6 +88,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Single extension with only interceptors', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [constants.extensions.b]
         });
 
@@ -102,26 +117,36 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(interceptors.beforePrinting).toHaveLength(1);
         expect(interceptors.beforeEnding).toHaveLength(1);
 
-        expect(interceptors.beforeParsing[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeParsing
-        );
-        expect(interceptors.beforeRouting[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeRouting
-        );
-        expect(interceptors.beforeRunning[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeRunning
-        );
-        expect(interceptors.beforePrinting[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforePrinting
-        );
-        expect(interceptors.beforeEnding[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeEnding
-        );
+        expect(interceptors.beforeParsing[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforeParsing,
+            extensionName: constants.extensions.b?.name
+        });
+        expect(interceptors.beforeRouting[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforeRouting,
+            extensionName: constants.extensions.b?.name
+        });
+        expect(interceptors.beforeRunning[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforeRunning,
+            extensionName: constants.extensions.b?.name
+        });
+        expect(interceptors.beforePrinting[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforePrinting,
+            extensionName: constants.extensions.b?.name
+        });
+        expect(interceptors.beforeEnding[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforeEnding,
+            extensionName: constants.extensions.b?.name
+        });
     });
 
     test('Multiple extensions', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [constants.extensions.a, constants.extensions.b]
         });
 
@@ -152,21 +177,26 @@ describe('[UNIT] services/ExtensionBundler', () => {
         expect(interceptors.beforePrinting).toHaveLength(1);
         expect(interceptors.beforeEnding).toHaveLength(1);
 
-        expect(interceptors.beforeParsing[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeParsing
-        );
-        expect(interceptors.beforeRouting[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeRouting
-        );
-        expect(interceptors.beforeRunning[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeRunning
-        );
-        expect(interceptors.beforePrinting[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforePrinting
-        );
-        expect(interceptors.beforeEnding[0]).toEqual(
-            constants.extensions.b?.interceptors?.beforeEnding
-        );
+        expect(interceptors.beforeParsing[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforeParsing,
+            extensionName: constants.extensions.b?.name
+        });
+        expect(interceptors.beforeRouting[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforeRouting,
+            extensionName: constants.extensions.b?.name
+        });
+        expect(interceptors.beforeRunning[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforeRunning,
+            extensionName: constants.extensions.b?.name
+        });
+        expect(interceptors.beforePrinting[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforePrinting,
+            extensionName: constants.extensions.b?.name
+        });
+        expect(interceptors.beforeEnding[0]).toEqual({
+            callback: constants.extensions.b?.interceptors?.beforeEnding,
+            extensionName: constants.extensions.b?.name
+        });
     });
 
     test('Multiple interceptors', () => {
@@ -190,17 +220,31 @@ describe('[UNIT] services/ExtensionBundler', () => {
         } as CliCoreExtension;
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [ext1, ext2, ext3]
         });
         const interceptors = bundler.getInterceptors();
         expect(interceptors.beforeParsing).toEqual([
-            ext1.interceptors!.beforeParsing
+            {
+                callback: ext1.interceptors!.beforeParsing,
+                extensionName: ext1.name
+            }
         ]);
         expect(interceptors.beforeRunning).toEqual([
-            ext2.interceptors!.beforeRunning
+            {
+                callback: ext2.interceptors!.beforeRunning,
+                extensionName: ext2.name
+            }
         ]);
         expect(interceptors.beforePrinting).toEqual([
-            ext3.interceptors!.beforePrinting
+            {
+                callback: ext3.interceptors!.beforePrinting,
+                extensionName: ext3.name
+            }
         ]);
         expect(interceptors.beforeRouting).toEqual([]);
         expect(interceptors.beforeEnding).toEqual([]);
@@ -209,28 +253,39 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Accessing previous mounted extension context during build', () => {
         const ext1 = {
             name: 'EXT1',
-            buildCommandAddons: jest.fn(({ appName, helpers, addons }) => {
-                expect(appName).toBe(constants.appName);
-                expect(helpers).toBe(mockHelpers);
-                expect(addons).toEqual({});
-                return { value1: 'value1' };
-            })
+            buildCommandAddons: jest.fn(
+                ({ appName, helpers, addons, logger }) => {
+                    expect(appName).toBe(constants.appName);
+                    expect(helpers).toBe(mockHelpers);
+                    expect(addons).toEqual({});
+                    expect(logger).toBeDefined();
+                    return { value1: 'value1' };
+                }
+            )
         } as CliCoreExtension;
 
         const ext2 = {
             name: 'EXT2',
-            buildCommandAddons: jest.fn(({ appName, helpers, addons }) => {
-                expect(appName).toBe(constants.appName);
-                expect(helpers).toBe(mockHelpers);
-                expect(addons).toEqual({
-                    EXT1: { value1: 'value1' }
-                });
-                return { value2: 'value2' };
-            })
+            buildCommandAddons: jest.fn(
+                ({ appName, helpers, addons, logger }) => {
+                    expect(appName).toBe(constants.appName);
+                    expect(helpers).toBe(mockHelpers);
+                    expect(logger).toBeDefined();
+                    expect(addons).toEqual({
+                        EXT1: { value1: 'value1' }
+                    });
+                    return { value2: 'value2' };
+                }
+            )
         } as CliCoreExtension;
 
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [ext1, ext2]
         });
 
@@ -250,15 +305,17 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Accessing later mounted extension context at runtime', () => {
         const ext1 = {
             name: 'EXT1',
-            buildCommandAddons: jest.fn(({ appName, helpers, addons }) => {
-                return {
-                    getExt2Value: () => {
-                        // This function is called at runtime, so EXT2 should be available
-                        return addons.EXT2.value2;
-                    },
-                    addons
-                };
-            })
+            buildCommandAddons: jest.fn(
+                ({ appName, helpers, addons, logger }) => {
+                    return {
+                        getExt2Value: () => {
+                            // This function is called at runtime, so EXT2 should be available
+                            return addons.EXT2.value2;
+                        },
+                        addons
+                    };
+                }
+            )
         } as CliCoreExtension;
 
         const ext2 = {
@@ -270,6 +327,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
 
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [ext1, ext2]
         });
 
@@ -294,6 +356,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Colliding extensions', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [constants.extensions.a, constants.extensions.a]
         });
 
@@ -307,6 +374,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Invalid extension name', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [constants.extensions.invalidName]
         });
 
@@ -320,6 +392,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Invalid builder', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [constants.extensions.invalidBuilder]
         });
 
@@ -333,6 +410,11 @@ describe('[UNIT] services/ExtensionBundler', () => {
     test('Empty extension', () => {
         const bundler = ExtensionBundler({
             appName: constants.appName,
+            behavior: {
+                colorfulOutput: false,
+                debugMode: false,
+                extensionLogging: false
+            },
             extensions: [constants.extensions.empty]
         });
 

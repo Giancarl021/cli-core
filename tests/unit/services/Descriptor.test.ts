@@ -13,7 +13,11 @@ const mockInstance: MockInstance<DescriptorInstance> = {
 const baseOptions: DescriptorOptions = {
     appName: constants.appName,
     appDescription: 'App description',
-    behavior: { colorfulOutput: false, debugMode: false },
+    behavior: {
+        colorfulOutput: false,
+        debugMode: false,
+        extensionLogging: false
+    },
     arguments: {
         flags: {
             prefixes: ['--', '-'],

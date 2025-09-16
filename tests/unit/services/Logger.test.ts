@@ -6,7 +6,11 @@ import {
     jest,
     afterAll
 } from '@jest/globals';
-import Logger, { LoggerFactory } from '../../../src/services/Logger.js';
+import Logger, {
+    ExtensionLoggerFactory,
+    LoggerFactory,
+    NullLogger
+} from '../../../src/services/Logger.js';
 import type { MockService } from '../../util/types.js';
 
 const mockInstance: MockService<typeof Logger> = {
@@ -46,6 +50,7 @@ describe('[UNIT] services/ExtensionBundler', () => {
             {
                 behavior: {
                     debugMode: false,
+                    extensionLogging: false,
                     colorfulOutput: 1
                 }
             },
@@ -102,6 +107,7 @@ describe('[UNIT] services/ExtensionBundler', () => {
             {
                 behavior: {
                     debugMode: false,
+                    extensionLogging: false,
                     colorfulOutput: true
                 }
             },
@@ -157,6 +163,7 @@ describe('[UNIT] services/ExtensionBundler', () => {
             {
                 behavior: {
                     debugMode: true,
+                    extensionLogging: false,
                     colorfulOutput: false
                 }
             },
@@ -206,11 +213,14 @@ describe('[UNIT] services/ExtensionBundler', () => {
         );
         expect(logger.format.json({ test: true })).toContain('{');
     });
+});
 
+describe('[UNIT] services/LoggerFactory', () => {
     test('Logger factory', () => {
         const loggerFactory = LoggerFactory({
             behavior: {
                 debugMode: true,
+                extensionLogging: false,
                 colorfulOutput: false
             }
         });
@@ -218,5 +228,64 @@ describe('[UNIT] services/ExtensionBundler', () => {
         const logger = loggerFactory('FactoryTest');
 
         expect(logger).toMatchObject(expect.objectContaining(mockInstance));
+    });
+});
+
+describe('[UNIT] services/ExtensionLoggerFactory', () => {
+    test('With extension logging enabled', () => {
+        const loggerFactory = ExtensionLoggerFactory({
+            behavior: {
+                debugMode: true,
+                extensionLogging: true,
+                colorfulOutput: false
+            }
+        });
+
+        const logger = loggerFactory('ExtensionTest');
+
+        expect(logger).toMatchObject(expect.objectContaining(mockInstance));
+
+        logger.info('This is an info message');
+
+        expect(consoleLogSpy).toHaveBeenCalledTimes(1);
+        expect(consoleLogSpy).toHaveBeenLastCalledWith(
+            expect.stringContaining('This is an info message')
+        );
+    });
+
+    test('With extension logging disabled', () => {
+        const loggerFactory = ExtensionLoggerFactory({
+            behavior: {
+                debugMode: true,
+                extensionLogging: false,
+                colorfulOutput: false
+            }
+        });
+
+        const logger = loggerFactory('ExtensionTest');
+
+        expect(logger).toMatchObject(expect.objectContaining(mockInstance));
+
+        logger.info('This is an info message');
+
+        expect(consoleLogSpy).not.toHaveBeenCalled();
+    });
+});
+
+describe('[UNIT] services/NullLogger', () => {
+    test('Null logger', () => {
+        const logger = NullLogger();
+
+        expect(logger).toMatchObject(expect.objectContaining(mockInstance));
+        logger.info('This is an info message');
+        expect(consoleLogSpy).not.toHaveBeenCalled();
+        logger.debug('This is a debug message');
+        expect(consoleLogSpy).not.toHaveBeenCalled();
+        logger.warning('This is a warning message');
+        expect(consoleWarnSpy).not.toHaveBeenCalled();
+        logger.error(new Error('This is an error message'));
+        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        logger.json({ key: 'value', number: 123, nested: { a: 1, b: 2 } });
+        expect(consoleLogSpy).not.toHaveBeenCalled();
     });
 });
