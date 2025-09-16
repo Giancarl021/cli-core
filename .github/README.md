@@ -5,14 +5,14 @@ The library provides a flexible way to define commands, providing automatic pars
 
 ## Summary
 
--   [Installation](#installation)
--   [Usage](#usage)
--   [Options](#options)
--   [Commands](#commands)
--   [Help](#help)
--   [Extensions](#extensions)
--   [Debug Mode](#debug-mode)
--   [Contributing](#contributing)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Options](#options)
+- [Commands](#commands)
+- [Help](#help)
+- [Extensions](#extensions)
+- [Debug Mode](#debug-mode)
+- [Contributing](#contributing)
 
 ## Installation
 
@@ -108,6 +108,7 @@ There are multiple options that can be passed to the CLI Core instance:
 |     `arguments.flags.prefixes`     |                         `string[]`                         | The prefixes for the flags.                                                                                                                                                                  |    `['-', '--']`     |
 |    `arguments.flags.helpFlags`     |                         `string[]`                         | Flags that will trigger the help command for the current command chain                                                                                                                       | `['h', 'help', '?']` |
 |        `behavior.debugMode`        |                         `boolean`                          | If the application is in `debug mode`, for more information refer to [Debug mode](#debug-mode)                                                                                               |       `false`        |
+|    `behavior.extensionLogging`     |                         `boolean`                          | If the extensions logs must be printed to the console. When `false`, the extension-specific loggers will not print anything.                                                                 |       `false`        |
 |     `behavior.colorfulOutput`      |                         `boolean`                          | If the output should contain ASCII colors. When `false`, the output will be plain text.                                                                                                      |        `true`        |
 |               `help`               |    [`HelpDescriptor`](src/interfaces/HelpDescriptor.ts)    | The help descriptor object, for more information refer to [Help](#help)                                                                                                                      |         `{}`         |
 |            `extensions`            | [`CliCoreExtension[]`](src/interfaces/CliCoreExtension.ts) | A list of extensions to extend the functionality of the commands, for more information refer to [Extensions](#extensions)                                                                    |         `[]`         |
@@ -297,13 +298,16 @@ const MyExtension: CliCoreExtension = {
                     'alias1'
                 ); // All the helpers are available here
 
+                options.logger; // A extension-specific logger is available here
+
                 return options.appName + ' is awesome!';
             }
         };
     },
     interceptors: {
         beforeParsing(options, rawArgs) {
-            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            options; // All the options passed to the CliCore instance are available here. Read-only.
+            options.logger; // A extension-specific logger is available here
             rawArgs; // The raw arguments passed to the application, usually process.argv
 
             // You can modify the options and rawArgs here if needed, or do a pre-loading step
@@ -311,14 +315,16 @@ const MyExtension: CliCoreExtension = {
             return rawArgs;
         },
         beforeRouting(options, input) {
-            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            options; // All the options passed to the CliCore instance are available here. Read-only.
+            options.logger; // A extension-specific logger is available here
             input; // The parsed arguments and flags
 
             // You can modify the input here if needed, or do a pre-routing step
             return input;
         },
         beforeRunning(options, route) {
-            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            options; // All the options passed to the CliCore instance are available here. Read-only.
+            options.logger; // A extension-specific logger is available here
             route; // The resolved command route, containing the command callback, args and flags
 
             // You can modify the route here if needed, or do a pre-execution step
@@ -327,7 +333,8 @@ const MyExtension: CliCoreExtension = {
             return route;
         },
         beforePrinting(options, output) {
-            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            options; // All the options passed to the CliCore instance are available here. Read-only.
+            options.logger; // A extension-specific logger is available here
             output; // The output of the command, can be a string or the NO_OUTPUT symbol
 
             // You can modify the output here if needed, or do a pre-printing step
@@ -335,13 +342,16 @@ const MyExtension: CliCoreExtension = {
             return output;
         },
         beforeEnding(options) {
-            options; // All the options passed to the CliCore instance (except extensions) are available here. Read-only.
+            options; // All the options passed to the CliCore instance are available here. Read-only.
+            options.logger; // A extension-specific logger is available here
 
             // This is the last step before ending the process, you can do some cleanup here if needed.
         }
     }
 };
 ```
+
+> **Important:** As the `options.behavior.extensionLogging` is `false` by default, the extension-specific loggers will be `NullLogger` instances. To see the logs from the extensions, the end user must enable the `extensionLogging` option manually. That being said, it is best practice to use the extension-specific logger only for debug logs, and use the command's `this.logger` for important logs that should be seen by the end user.
 
 ### Interface augmentation in TypeScript
 
@@ -353,7 +363,7 @@ declare module '@giancarl021/cli-core' {
         myExtension: {
             myExtensionMethod(): string;
             myExtensionConst: number;
-        }
+        };
     }
 }
 ```
@@ -366,11 +376,11 @@ Go back to [Summary](#summary)
 
 The debug mode can be enabled by setting the `behavior.debugMode` option to `true`. When enabled, the application will change some behaviors to make debugging easier:
 
--   The logger will print `debug` level logs
--   The logger will prefix each message with a timestamp and the log level
--   The instance return the result of the command instead of printing it to the console
--   Any error thrown will be propagated instead of being caught and printed to the console
--   Any `process.exit` calls will be ignored
+- The logger will print `debug` level logs
+- The logger will prefix each message with a timestamp and the log level
+- The instance return the result of the command instead of printing it to the console
+- Any error thrown will be propagated instead of being caught and printed to the console
+- Any `process.exit` calls will be ignored
 
 ## Contributing
 

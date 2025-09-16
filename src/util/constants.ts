@@ -14,6 +14,7 @@ const defaultOptions: CliCoreOptions = {
     appDescription: null,
     behavior: {
         debugMode: false,
+        extensionLogging: false,
         colorfulOutput: true
     },
     help: {},

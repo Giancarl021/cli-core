@@ -80,6 +80,10 @@ interface CliCoreOptions {
          */
         debugMode: boolean;
         /**
+         * Whether to enable logging for extensions, by default it's `false`.
+         */
+        extensionLogging: boolean;
+        /**
          * Whether to enable colorful output using `chalk`, by default it's `true`.
          * It can also be set to a specific `chalk.level` to force a specific color level
          */

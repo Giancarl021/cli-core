@@ -5,7 +5,11 @@ import Descriptor from './src/services/Descriptor.js';
 import Parser from './src/services/Parser.js';
 import ExtensionBundler from './src/services/ExtensionBundler.js';
 import CommandHelpers from './src/services/CommandHelpers.js';
-import { LoggerFactory, type LoggerInstance } from './src/services/Logger.js';
+import {
+    ExtensionLoggerFactory,
+    LoggerFactory,
+    type LoggerInstance
+} from './src/services/Logger.js';
 
 import type CliCoreOptions from './src/interfaces/CliCoreOptions.js';
 import type { PartialCliCoreOptions } from './src/interfaces/CliCoreOptions.js';
@@ -23,6 +27,7 @@ import type FlowInterceptors from './src/interfaces/FlowInterceptors.js';
 import type ParsedArguments from './src/interfaces/ParsedArguments.js';
 import type RoutingResult from './src/interfaces/RoutingResult.js';
 import type { CommandDescriptor } from './src/interfaces/HelpDescriptor.js';
+import type { InterceptorOptions } from './src/interfaces/CliCoreExtension.js';
 
 type CliCoreInstance = ReturnType<typeof CliCore>;
 
@@ -97,12 +102,26 @@ export default function CliCore(options: PartialCliCoreOptions) {
      * @returns The final result after all interceptors have been run
      */
     async function _runInterceptors<T>(
-        interceptors: ((options: CliCoreOptions, input: T) => Promise<T> | T)[],
+        interceptorType: keyof FlowInterceptors,
+        interceptors: {
+            callback: (options: InterceptorOptions, input: T) => Promise<T> | T;
+            extensionName: string;
+        }[],
         input: T
     ): Promise<T> {
         let data = input;
-        for (const interceptor of interceptors) {
-            data = await interceptor(_options, data);
+        const loggerFactory = ExtensionLoggerFactory(_options);
+
+        for (const { callback, extensionName } of interceptors) {
+            data = await callback(
+                {
+                    ..._options,
+                    logger: loggerFactory(
+                        `${options.appName}::Extensions::${extensionName}.interceptors.${interceptorType}`
+                    )
+                },
+                data
+            );
         }
 
         return data;
@@ -117,22 +136,29 @@ export default function CliCore(options: PartialCliCoreOptions) {
         const interceptors = bundler.getInterceptors();
 
         const rawArgs = await _runInterceptors(
+            'beforeParsing',
             interceptors.beforeParsing,
             _options.arguments.origin.slice(_options.arguments.ignoreFirst)
         );
 
         const { args, flags } = await _runInterceptors(
+            'beforeRouting',
             interceptors.beforeRouting,
             parser.parse(rawArgs)
         );
 
         const navigation = await _runInterceptors(
+            'beforeRunning',
             interceptors.beforeRunning,
             router.navigate(args, flags)
         );
 
         const logger = loggerFactory(
-            _options.appName + '::Command::' + navigation.commandChain.join('.')
+            _options.appName +
+                '::Command' +
+                (navigation.commandChain.length
+                    ? '::' + navigation.commandChain.join('.')
+                    : '')
         );
 
         if (navigation.status === 'error') {
@@ -180,11 +206,19 @@ export default function CliCore(options: PartialCliCoreOptions) {
             }
         }
 
-        result = await _runInterceptors(interceptors.beforePrinting, result);
+        result = await _runInterceptors(
+            'beforePrinting',
+            interceptors.beforePrinting,
+            result
+        );
 
         const final = _handleResult(logger, result);
 
-        await _runInterceptors(interceptors.beforeEnding, undefined);
+        await _runInterceptors(
+            'beforeEnding',
+            interceptors.beforeEnding,
+            undefined
+        );
 
         return final;
     }

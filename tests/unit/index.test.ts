@@ -309,6 +309,21 @@ describe('[UNIT] index/run', () => {
         expect(consoleLogSpy).toHaveBeenCalledWith('Test successful');
     });
 
+    test('Normal mode single command successul run', async () => {
+        const options = structuredClone(defaultOptions);
+
+        options.arguments!.origin = [];
+        options.behavior!.debugMode = false;
+        options.commands = defineCommand(() => 'Single command app');
+
+        const cli = index(options);
+
+        expect(cli).toMatchObject(expect.objectContaining(mockInstance));
+
+        await expect(cli.run()).resolves.toBeUndefined();
+        expect(consoleLogSpy).toHaveBeenCalledWith('Single command app');
+    });
+
     test('Normal mode error run', async () => {
         const options = structuredClone(defaultOptions);
 
@@ -401,7 +416,7 @@ describe('[UNIT] index/defineMultiCommandHelpDescriptor', () => {
                 args: ['arg1', 'arg2'],
                 flags: {
                     test: {
-                        type: 'boolean',       
+                        type: 'boolean',
                         description: 'Test flag'
                     }
                 },

@@ -1,5 +1,6 @@
 import { Chalk } from 'chalk';
 import { colorize } from 'json-colorizer';
+import constants from '../util/constants.js';
 
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
 import type Nullable from '../interfaces/Nullable.js';
@@ -9,8 +10,48 @@ export type LoggerInstance = ReturnType<typeof Logger>;
 
 type MessageLogLevel = 'debug' | 'info' | 'warn' | 'error' | 'data';
 
-export function LoggerFactory(options: LoggerOptions) {
+/**
+ * A factory function that creates logger instances for specific origins.
+ * @param options The logger options, including behavior settings
+ * @returns A factory function that creates logger instances for specific origins
+ */
+export function LoggerFactory(
+    options: LoggerOptions
+): (origin: string) => LoggerInstance {
     return (origin: string) => Logger(options, origin);
+}
+
+/**
+ * A factory function that creates logger instances for extensions.
+ * If extension logging is disabled, it returns a null logger.
+ * @param options The logger options, including behavior settings
+ * @returns A factory function that creates logger instances for specific origins or a null logger
+ */
+export function ExtensionLoggerFactory(
+    options: LoggerOptions
+): ReturnType<typeof LoggerFactory> {
+    if (options.behavior.extensionLogging) {
+        return LoggerFactory(options);
+    }
+
+    return () => NullLogger();
+}
+
+/**
+ * A logger instance that does nothing.
+ * @returns An object with logging methods that do nothing
+ */
+export function NullLogger(): LoggerInstance {
+    const logger = Logger(constants.defaultOptions, '<NULL>');
+
+    return {
+        ...logger,
+        debug: () => {},
+        info: () => {},
+        warning: () => {},
+        error: () => {},
+        json: () => {}
+    };
 }
 
 /**
@@ -76,7 +117,7 @@ export default function Logger(options: LoggerOptions, origin: string) {
      */
     function _formatMessagePrefix(level: MessageLogLevel): Nullable<string> {
         return options.behavior.debugMode
-            ? `${chalk.green(new Date().toISOString())} ${_formatMessageLevel(level)} ${chalk.whiteBright('[' + origin + ']')} `
+            ? `${chalk.green(new Date().toISOString())} ${_formatMessageLevel(level)} ${chalk.gray('[' + origin + ']')} `
             : '';
     }
 

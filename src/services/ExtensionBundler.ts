@@ -1,4 +1,5 @@
 import constants from '../util/constants.js';
+import { ExtensionLoggerFactory } from './Logger.js';
 import { isEmpty } from '../util/object.js';
 
 import type CliCoreCommandAddons from '../interfaces/CliCoreCommandAddons.js';
@@ -8,7 +9,7 @@ import type FlowInterceptors from '../interfaces/FlowInterceptors.js';
 
 export type ExtensionBundlerOptions = Pick<
     CliCoreOptions,
-    'appName' | 'extensions'
+    'appName' | 'extensions' | 'behavior'
 >;
 
 export type ExtensionBundlerInstance = ReturnType<typeof ExtensionBundler>;
@@ -21,7 +22,8 @@ export type ExtensionBundlerInstance = ReturnType<typeof ExtensionBundler>;
 export default function ExtensionBundler(options: ExtensionBundlerOptions) {
     /**
      * Collects flow interceptors from all extensions.
-     * @returns An object containing arrays of interceptors for each flow stage
+     * @returns An object containing arrays of interceptors for each flow stage alongside their extension names
+     * to be bound in the logger instance later
      */
     function getInterceptors(): FlowInterceptors {
         const interceptors: FlowInterceptors = {
@@ -35,29 +37,34 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
         for (const extension of options.extensions) {
             if (extension.interceptors) {
                 if (extension.interceptors.beforeParsing)
-                    interceptors.beforeParsing.push(
-                        extension.interceptors.beforeParsing
-                    );
+                    interceptors.beforeParsing.push({
+                        callback: extension.interceptors.beforeParsing,
+                        extensionName: extension.name
+                    });
 
                 if (extension.interceptors.beforeRouting)
-                    interceptors.beforeRouting.push(
-                        extension.interceptors.beforeRouting
-                    );
+                    interceptors.beforeRouting.push({
+                        callback: extension.interceptors.beforeRouting,
+                        extensionName: extension.name
+                    });
 
                 if (extension.interceptors.beforeRunning)
-                    interceptors.beforeRunning.push(
-                        extension.interceptors.beforeRunning
-                    );
+                    interceptors.beforeRunning.push({
+                        callback: extension.interceptors.beforeRunning,
+                        extensionName: extension.name
+                    });
 
                 if (extension.interceptors.beforePrinting)
-                    interceptors.beforePrinting.push(
-                        extension.interceptors.beforePrinting
-                    );
+                    interceptors.beforePrinting.push({
+                        callback: extension.interceptors.beforePrinting,
+                        extensionName: extension.name
+                    });
 
                 if (extension.interceptors.beforeEnding)
-                    interceptors.beforeEnding.push(
-                        extension.interceptors.beforeEnding
-                    );
+                    interceptors.beforeEnding.push({
+                        callback: extension.interceptors.beforeEnding,
+                        extensionName: extension.name
+                    });
             }
         }
 
@@ -71,6 +78,7 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
      */
     function bundle(helpers: CommandHelpersInstance): CliCoreCommandAddons {
         const commandAddons: CliCoreCommandAddons = {};
+        const loggerFactory = ExtensionLoggerFactory(options);
 
         for (const extension of options.extensions) {
             const name = extension.name as keyof CliCoreCommandAddons;
@@ -89,7 +97,10 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
                 ? extension.buildCommandAddons({
                       appName: options.appName,
                       helpers,
-                      addons: commandAddons
+                      addons: commandAddons,
+                      logger: loggerFactory(
+                          `${options.appName}::Extensions::${name}.addons`
+                      )
                   })
                 : {};
 
