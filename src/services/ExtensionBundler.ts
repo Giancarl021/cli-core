@@ -5,6 +5,7 @@ import type CliCoreCommandAddons from '../interfaces/CliCoreCommandAddons.js';
 import type CliCoreOptions from '../interfaces/CliCoreOptions.js';
 import type { CommandHelpersInstance } from './CommandHelpers.js';
 import type FlowInterceptors from '../interfaces/FlowInterceptors.js';
+import { LoggerFactory } from './Logger.js';
 
 export type ExtensionBundlerOptions = Pick<
     CliCoreOptions,

@@ -10,8 +10,7 @@
         "declaration": true,
         "outDir": "lib",
         "noEmit": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowJs": true
+        "forceConsistentCasingInFileNames": true
     },
     "exclude": ["node_modules", "lib"],
     "include": ["index.ts", "tests/**/*.ts", "src/**/*.ts"]

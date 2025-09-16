@@ -132,7 +132,11 @@ export default function CliCore(options: PartialCliCoreOptions) {
         );
 
         const logger = loggerFactory(
-            _options.appName + '::Command::' + navigation.commandChain.join('.')
+            _options.appName +
+                '::Command' +
+                (navigation.commandChain.length
+                    ? '::' + navigation.commandChain.join('.')
+                    : '')
         );
 
         if (navigation.status === 'error') {

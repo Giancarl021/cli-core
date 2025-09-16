@@ -76,7 +76,7 @@ export default function Logger(options: LoggerOptions, origin: string) {
      */
     function _formatMessagePrefix(level: MessageLogLevel): Nullable<string> {
         return options.behavior.debugMode
-            ? `${chalk.green(new Date().toISOString())} ${_formatMessageLevel(level)} ${chalk.whiteBright('[' + origin + ']')} `
+            ? `${chalk.green(new Date().toISOString())} ${_formatMessageLevel(level)} ${chalk.gray('[' + origin + ']')} `
             : '';
     }
 
