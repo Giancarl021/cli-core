@@ -60,7 +60,7 @@ export default function Router(options: RouterOptions) {
         // If at this point the user do not hit a endpoint, it means that the route
         // is incomplete and we should show the help message to show the available options
         // from this point onwards
-        if (!_isEndpoint()) {
+        if (!_isEndpoint(args.length)) {
             result.status = 'help';
             // Signal that the process should exit with an error code
             process.exitCode = 1;
@@ -74,7 +74,7 @@ export default function Router(options: RouterOptions) {
          * @param index The current index in the arguments array, if applicable
          * @returns `true` if the current command is an endpoint or undefined, `false` otherwise
          */
-        function _isEndpoint(index?: number): boolean {
+        function _isEndpoint(index: number): boolean {
             // We reached a dead end in the command structure, so we return an error
             if (typeof currentCommand === 'undefined') {
                 result.status = 'error';
@@ -91,7 +91,7 @@ export default function Router(options: RouterOptions) {
                 result.status = result.status === 'help' ? 'help' : 'callback';
                 // The remaining arguments are considered as arguments to the command
                 // being executed.
-                result.commandArguments = index ? args.slice(index) : args;
+                result.commandArguments = args.slice(index);
                 result.result = currentCommand;
 
                 return true;

@@ -191,6 +191,13 @@ describe('[UNIT] services/Router', () => {
             commandArguments: ['arg1', 'arg2', 'arg3']
         });
 
+        expect(router.navigate(['a', 'b'], {})).toMatchObject({
+            status: 'callback',
+            commandChain: ['a', 'b'],
+            result: commands.a.b,
+            commandArguments: []
+        });
+
         expect(
             router.navigate(['a', 'c', 'd', 'e', 'arg1', 'arg2', 'arg3'], {})
         ).toMatchObject({
