@@ -198,8 +198,11 @@ export default function CliCore(options: PartialCliCoreOptions) {
                     flags
                 );
             } catch (error) {
-                const _err =
-                    error instanceof Error ? error : new Error(String(error));
+                const _err = await _runInterceptors(
+                    'beforeError',
+                    interceptors.beforeError,
+                    error instanceof Error ? error : new Error(String(error))
+                );
 
                 _handleError(logger, _err);
                 return;

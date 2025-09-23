@@ -56,8 +56,19 @@ export interface CliCoreExtensionInterceptors {
         route: RoutingResult
     ): Awaitable<RoutingResult>;
     /**
+     * Called before handling an error thrown during the command execution.
+     * This interceptor can be called to change the error before it's handled,
+     * such as logging it or transforming it into a different error.
+     * @remarks This interceptor is mutually exclusive with `beforePrinting`.
+     * @returns The error to be used in the handling
+     * @param options The CLI Core options passed by the user alongside a logger instance
+     * @param error The error thrown during the command execution
+     */
+    beforeError(options: InterceptorOptions, error: Error): Awaitable<Error>;
+    /**
      * Called before printing the command output. This interceptor can be called
      * to change the output of the command before it's printed to the terminal.
+     * @remarks This interceptor is mutually exclusive with `beforeError`.
      * @param options The CLI Core options passed by the user alongside a logger instance
      * @param output The output of the command before printing
      * @returns The output to be used in the printing

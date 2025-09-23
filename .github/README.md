@@ -332,6 +332,15 @@ const MyExtension: CliCoreExtension = {
 
             return route;
         },
+        beforeError(options, error) {
+            options; // All the options passed to the CliCore instance are available here. Read-only.
+            options.logger; // A extension-specific logger is available here
+            error; // The error thrown during the execution of the command
+
+            // You can modify the error here if needed, or do a pre-error step
+
+            return error;
+        },
         beforePrinting(options, output) {
             options; // All the options passed to the CliCore instance are available here. Read-only.
             options.logger; // A extension-specific logger is available here
@@ -352,6 +361,8 @@ const MyExtension: CliCoreExtension = {
 ```
 
 > **Important:** As the `options.behavior.extensionLogging` is `false` by default, the extension-specific loggers will be `NullLogger` instances. To see the logs from the extensions, the end user must enable the `extensionLogging` option manually. That being said, it is best practice to use the extension-specific logger only for debug logs, and use the command's `this.logger` for important logs that should be seen by the end user.
+
+> **Note:** The `beforePrinting` and `beforeError` interceptors are mutually exclusive, as the `beforeError` interceptor will be called only if an error is thrown during the command execution, while the `beforePrinting` interceptor will be called only if the command executes successfully.
 
 ### Interface augmentation in TypeScript
 

@@ -30,6 +30,7 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
             beforeParsing: [],
             beforeRouting: [],
             beforeRunning: [],
+            beforeError: [],
             beforePrinting: [],
             beforeEnding: []
         };
@@ -51,6 +52,12 @@ export default function ExtensionBundler(options: ExtensionBundlerOptions) {
                 if (extension.interceptors.beforeRunning)
                     interceptors.beforeRunning.push({
                         callback: extension.interceptors.beforeRunning,
+                        extensionName: extension.name
+                    });
+
+                if (extension.interceptors.beforeError)
+                    interceptors.beforeError.push({
+                        callback: extension.interceptors.beforeError,
                         extensionName: extension.name
                     });
 

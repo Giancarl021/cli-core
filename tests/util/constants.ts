@@ -47,6 +47,9 @@ export default {
                 beforeRouting(_, x) {
                     return x;
                 },
+                beforeError(_, x) {
+                    return x;
+                },
                 beforeRunning(_, x) {
                     return x;
                 },
