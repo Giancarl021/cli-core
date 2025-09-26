@@ -364,6 +364,24 @@ const MyExtension: CliCoreExtension = {
 
 > **Note:** The `beforePrinting` and `beforeError` interceptors are mutually exclusive, as the `beforeError` interceptor will be called only if an error is thrown during the command execution, while the `beforePrinting` interceptor will be called only if the command executes successfully.
 
+### Life-cycle of a extension
+
+1. The extension is created and added to the `extensions` array in the options passed to the `CliCore` instance.
+2. A `CliCore` app is created and ran by the user.
+3. The `beforeParsing` interceptors are called in the order they were added.
+4. The arguments are parsed.
+5. The `beforeRouting` interceptors are called in the order they were added.
+6. The command is resolved by routing the parsed arguments.
+7. The `beforeRunning` interceptors are called in the order they were added.
+8. The `buildCommandAddons` method of each extension is called, and the returned objects are merged into the command's `this.extensions` object.
+9. The command is executed.
+10. If an error is thrown during the command execution, the `beforeError` interceptors are called in the order they were added. Otherwise, the `beforePrinting` interceptors are called in the order they were added.
+11. The output is printed to the console, unless it is the `NO_OUTPUT` symbol.
+12. The `beforeEnding` interceptors are called in the order they were added.
+13. The process ends.
+
+> **Important:** The interceptors are not protected by a try-catch block, so if an error is thrown inside an interceptor, it will propagate to the end user and the application will exit with a non-zero status code, regardless of the `behavior.debugMode` option. It is recommended to handle any potential errors inside the interceptors.
+
 ### Interface augmentation in TypeScript
 
 To make TypeScript aware of the extension methods, you need to augment the `CliCoreCommandAddons` interface:
