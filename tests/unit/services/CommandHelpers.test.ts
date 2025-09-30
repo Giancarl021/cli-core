@@ -53,6 +53,8 @@ const mockInstance: MockService<typeof CommandHelpers> = {
     getStdout: expect.any(Function),
     getStdin: expect.any(Function),
     noOutput: expect.any(Function),
+    readBufferFromStdin: expect.any(Function),
+    readTextFromStdin: expect.any(Function),
     readJsonFromStdin: expect.any(Function),
     writeJsonToStdout: expect.any(Function),
     writeJsonToStderr: expect.any(Function)
@@ -203,5 +205,83 @@ describe('[UNIT] services/CommandHelpers', () => {
         await expect(helpers.readJsonFromStdin()).resolves.toEqual({
             test: true
         });
+    });
+
+    test('Stdin reading as buffer', async () => {
+        const helpers = CommandHelpers(
+            constants.executionParameters.empty.args,
+            constants.executionParameters.empty.flags,
+            {
+                stdin,
+                stdout: process.stdout,
+                stderr: process.stderr
+            }
+        );
+
+        const buffer = await helpers.readBufferFromStdin();
+        expect(buffer).toBeInstanceOf(Buffer);
+        expect(buffer.toString('utf8')).toBe('{ "test": true }\n');
+    });
+
+    test('Stdin reading as text', async () => {
+        const helpers = CommandHelpers(
+            constants.executionParameters.empty.args,
+            constants.executionParameters.empty.flags,
+            {
+                stdin,
+                stdout: process.stdout,
+                stderr: process.stderr
+            }
+        );
+
+        const text = await helpers.readTextFromStdin();
+        expect(text).toBe('{ "test": true }\n');
+    });
+
+    test('Stdin reading as JSON', async () => {
+        const helpers = CommandHelpers(
+            constants.executionParameters.empty.args,
+            constants.executionParameters.empty.flags,
+            {
+                stdin,
+                stdout: process.stdout,
+                stderr: process.stderr
+            }
+        );
+
+        const json = await helpers.readJsonFromStdin<{ test: boolean }>();
+        expect(json).toEqual({ test: true });
+    });
+
+    test('Stdin reading as text with different encoding', async () => {
+        const helpers = CommandHelpers(
+            constants.executionParameters.empty.args,
+            constants.executionParameters.empty.flags,
+            {
+                stdin,
+                stdout: process.stdout,
+                stderr: process.stderr
+            }
+        );
+
+        const text = await helpers.readTextFromStdin('binary');
+        expect(text).toBe('{ "test": true }\n');
+    });
+
+    test('Stdin reading as JSON with different encoding', async () => {
+        const helpers = CommandHelpers(
+            constants.executionParameters.empty.args,
+            constants.executionParameters.empty.flags,
+            {
+                stdin,
+                stdout: process.stdout,
+                stderr: process.stderr
+            }
+        );
+
+        const json = await helpers.readJsonFromStdin<{ test: boolean }>(
+            'binary'
+        );
+        expect(json).toEqual({ test: true });
     });
 });

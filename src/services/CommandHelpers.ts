@@ -191,21 +191,49 @@ export default function CommandHelpers(
     }
 
     /**
-     * Reads JSON data from the standard input stream.
+     * Reads all data from the standard input stream and returns it as a Buffer.
      *
      * **Important:** Will block execution until the input stream is closed (e.g., EOF).
-     * @returns A promise that resolves to the parsed JSON data
+     * @returns A promise that resolves to the data read from stdin as a Buffer
      */
-    async function readJsonFromStdin<T = unknown>(): Promise<T> {
+    async function readBufferFromStdin(): Promise<Buffer> {
         const chunks: Buffer[] = [];
 
         for await (const chunk of stdio.stdin) {
-            chunks.push(Buffer.from(chunk, 'utf8'));
+            chunks.push(chunk);
         }
 
-        const jsonString = Buffer.concat(chunks).toString('utf-8');
+        return Buffer.concat(chunks);
+    }
 
-        return JSON.parse(jsonString) as T;
+    /**
+     * Reads all data from the standard input stream and returns it as a UTF-8 string.
+     *
+     * **Important:** Will block execution until the input stream is closed (e.g., EOF).
+     * @param encoding The text encoding to use. Default is 'utf8'
+     * @returns A promise that resolves to the data read from stdin as a string
+     */
+    async function readTextFromStdin(
+        encoding: BufferEncoding = 'utf8'
+    ): Promise<string> {
+        const data = await readBufferFromStdin();
+
+        return data.toString(encoding);
+    }
+
+    /**
+     * Reads JSON data from the standard input stream.
+     *
+     * **Important:** Will block execution until the input stream is closed (e.g., EOF).
+     * @param encoding The text encoding to use. Default is 'utf8'
+     * @returns A promise that resolves to the parsed JSON data
+     */
+    async function readJsonFromStdin<T = unknown>(
+        encoding: BufferEncoding = 'utf8'
+    ): Promise<T> {
+        const data = await readTextFromStdin(encoding);
+
+        return JSON.parse(data) as T;
     }
 
     /**
@@ -313,9 +341,25 @@ export default function CommandHelpers(
          */
         getStderr,
         /**
+         * Reads all data from the standard input stream and returns it as a Buffer.
+         *
+         * **Important:** Will block execution until the input stream is closed (e.g., EOF).
+         * @returns A promise that resolves to the data read from stdin as a Buffer
+         */
+        readBufferFromStdin,
+        /**
+         * Reads all data from the standard input stream and returns it as a UTF-8 string.
+         *
+         * **Important:** Will block execution until the input stream is closed (e.g., EOF).
+         * @param encoding The text encoding to use. Default is 'utf8'
+         * @returns A promise that resolves to the data read from stdin as a string
+         */
+        readTextFromStdin,
+        /**
          * Reads JSON data from the standard input stream.
          *
          * **Important:** Will block execution until the input stream is closed (e.g., EOF).
+         * @param encoding The text encoding to use. Default is 'utf8'
          * @returns A promise that resolves to the parsed JSON data
          */
         readJsonFromStdin,

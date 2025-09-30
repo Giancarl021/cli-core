@@ -191,6 +191,8 @@ function command() {
     this.helpers.getStderr(); // Get the stderr stream
     this.helpers.writeJsonToStdout({ test: true }); // Write JSON to stdout
     this.helpers.writeJsonToStderr({ test: true }); // Write JSON to stderr
+    await this.helpers.readBufferFromStdin(); // Read raw buffer from stdin asynchronously (WARNING: will lock the process until EOF)
+    await this.helpers.readTextFromStdin(); // Read text from stdin asynchronously (WARNING: will lock the process until EOF)
     await this.helpers.readJsonFromStdin(); // Read JSON from stdin asynchronously (WARNING: will lock the process until EOF)
 
     return this.NO_OUTPUT; // A special constant that can be returned to indicate that the command should not print anything to the console
