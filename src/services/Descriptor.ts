@@ -254,7 +254,7 @@ export default function Descriptor(options: DescriptorOptions) {
     function _renderCommandDescriptor(descriptor: CommandDescriptor): string {
         return `${
             descriptor.args ? ' ' + _renderArguments(descriptor.args) : ''
-        }\n  ${chalk.white('Description:' + descriptor.description)}${
+        }\n  ${chalk.white('Description: ' + descriptor.description)}${
             descriptor.stdio
                 ? chalk.white(`\n  STDIO:\n`) + _renderStdio(descriptor.stdio)
                 : ''
